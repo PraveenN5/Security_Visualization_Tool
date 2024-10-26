@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>AES</title>
+  <link rel="stylesheet" href="grid.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .col {
+      margin: 0;
+    }
+
+    body {
+      background-color: black;
+      color :rgb(240, 240, 240);
+      font-family: monospace;
+      font-size: 15px;
+      overflow: hidden;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    table, th, td {
+      border: 2px solid rgb(200, 200, 200);
+    }
+
+    td {
+      padding: 10px 10px;
+      font-size: 22px;
+      color: rgb(86, 242, 27);
+    }
+
+    button {
+      background-color: rgba(0,0,0,0);
+      color :rgb(240, 240, 240);
+      padding: 10px 20px;
+      border: 2px solid white;
+      font-family: monospace;
+    }
+
+    input {
+      background-color: rgba(0,0,0,0);
+      color :rgb(240, 240, 240);
+      padding: 5px 10px;
+      border: 1px solid white;
+      text-align: center;
+      color: rgb(86, 242, 27);
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    #input-panel {
+      height: 100vh;
+      /* background-color: red; */
+      padding: 10px;
+      border-right: 1px solid white;
+      text-align: center;
+    }
+
+    #input-panel table {
+      margin-left:auto;
+      margin-right:auto;
+    }
+
+    #results-container {
+      padding: 10px;
+      padding-left: 30px;
+      height: 100vh;
+      overflow: auto;
+    }
+
+    #results-container{
+      display: inline-block;
+      text-align: center;
+    }
+
+    #results-container table {
+      margin-left:auto;
+      margin-right:auto;
+      /* display: inline-table; */
+      /* float: right; */
+    }
+
+    #results-container td {
+      padding: 5px 5px;
+      font-size: 15px;
+      color: rgb(86, 242, 27);
+    }
+
+
+  </style>
+</head>
+<body>
+
+  <div class="row">
+    <div class="col span-5-of-12" id="input-panel">
+      <h2>AES Algorithm-128</h2>
+      <br><br>
+      <div class="user-inputs">
+        plain text :
+        <br>
+        <input placeholder="enter text here" type="text" id="plain_text">
+        <br><br>
+        key : <br>
+        <input placeholder="enter text here" type="text" id="key">
+        <br><br>
+        <button onclick="aes_init()">encrypt</button>
+        <br><br>
+      </div>
+
+      <div id="resultbox"></div>
+    </div>
+
+    <div class="col span-7-of-12" id="results-container"></div>
+  </div>
+</body>
+<script src="main.js"></script>
+</html>

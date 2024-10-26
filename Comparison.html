@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Compare Algorithms</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+  <style>
+    body {
+      background-color: #000;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+    }
+
+    h1 {
+      color: #01E9F8;
+    }
+
+    .container {
+      margin-top: 5rem;
+    }
+
+    .btn {
+      background-color: #01E9F8;
+      color: #000;
+    }
+
+    .btn:hover {
+      background-color: #01C5D8;
+      color: #fff;
+    }
+
+    .form-check-input:checked {
+      background-color: #01E9F8;
+      border-color: #01E9F8;
+    }
+
+    .form-check-label {
+      margin-left: 0.5rem;
+    }
+
+    .compare-btn {
+      margin-top: 2rem;
+      border: none;
+      padding: 0.8rem 2rem;
+      background-color: #01E9F8;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .compare-btn:hover {
+      background-color: #01C5D8;
+      color: #fff;
+      transition: all 0.3s ease-in-out;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1 class="text-center">Algorithm Comparison</h1>
+    <p class="text-center">Select algorithms to compare...</p>
+
+    <form id="comparisonForm">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="AES" id="aesCheck">
+            <label class="form-check-label" for="aesCheck">AES</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="DES" id="desCheck">
+            <label class="form-check-label" for="desCheck">DES</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="RSA" id="rsaCheck">
+            <label class="form-check-label" for="rsaCheck">RSA</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="Triple DES" id="tripledesCheck">
+            <label class="form-check-label" for="tripledesCheck">Triple DES</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="Quantum" id="quantumCheck">
+            <label class="form-check-label" for="quantumCheck">Quantum</label>
+          </div>
+
+          <div class="text-center">
+            <button type="button" class="compare-btn" onclick="compareAlgorithms()">Compare</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="container mt-5" id="comparisonResult" style="display:none;">
+    <h2 class="text-center">Comparison Result</h2>
+    <p class="text-center" id="comparisonText"></p>
+  </div>
+
+  <script>
+    function compareAlgorithms() {
+      const selectedAlgorithms = [];
+      if (document.getElementById('aesCheck').checked) selectedAlgorithms.push('AES');
+      if (document.getElementById('desCheck').checked) selectedAlgorithms.push('DES');
+      if (document.getElementById('rsaCheck').checked) selectedAlgorithms.push('RSA');
+      if (document.getElementById('tripledesCheck').checked) selectedAlgorithms.push('Triple DES');
+      if (document.getElementById('quantumCheck').checked) selectedAlgorithms.push('Quantum');
+
+      let efficiencyMessage = '';
+
+      if (selectedAlgorithms.length > 0) {
+        if (selectedAlgorithms.includes('AES')) {
+          efficiencyMessage = 'Based on efficiency, AES is considered the most efficient algorithm.';
+        } else if (selectedAlgorithms.includes('Quantum')) {
+          efficiencyMessage = 'Quantum algorithms have potential to outperform classical ones in certain areas, but are still experimental.';
+        } else if (selectedAlgorithms.includes('RSA')) {
+          efficiencyMessage = 'RSA is strong in security, but less efficient compared to AES for large datasets.';
+        } else {
+          efficiencyMessage = 'Other algorithms like DES and Triple DES are less efficient compared to AES.';
+        }
+
+        document.getElementById('comparisonText').innerText = `You selected: ${selectedAlgorithms.join(', ')}.\n${efficiencyMessage}`;
+        document.getElementById('comparisonResult').style.display = 'block';
+      } else {
+        alert('Please select at least one algorithm to compare.');
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap');
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
+</body>
+
+</html>
