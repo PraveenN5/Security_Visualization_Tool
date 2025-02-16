@@ -10,6 +10,9 @@
     integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap');
+    
     body {
       background-color: #000;
       font-family: 'Poppins', sans-serif;
@@ -21,6 +24,145 @@
 
     .container {
       background-color: #1F252E;
+    }
+
+    .wrapper {
+      position: relative;
+      width: 100%;
+      padding: 20px;
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      position: relative;
+      width: 300px;
+      height: 400px;
+      background: #000;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+    }
+
+    .poster {
+      position: relative;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(45deg, #1F252E, #000);
+    }
+
+    .icon-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .icon-container i {
+      font-size: 6.5rem;
+      color: #01E9F8;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover .icon-container i {
+      transform: scale(1.2);
+    }
+
+    .poster::before {
+      content: '';
+      position: absolute;
+      bottom: -45%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      transition: .3s;
+      background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+    }
+
+    .card:hover .poster::before {
+      bottom: 0;
+    }
+
+    .poster img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: .3s;
+      opacity: 0.9;
+    }
+
+    .card:hover .poster img {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+
+    .details {
+      position: absolute;
+      bottom: -100%;
+      left: 0;
+      width: 100%;
+      height: auto;
+      padding: 1.5em 1.5em 1.8em;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(16px) saturate(120%);
+      transition: .3s;
+      color: #fff;
+      z-index: 2;
+    }
+
+    .card:hover .details {
+      bottom: 0;
+    }
+
+    .details h1 {
+      font-size: 1.4em;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #01E9F8;
+    }
+
+    .details .desc {
+      color: #fff;
+      opacity: .8;
+      line-height: 1.4;
+      margin-bottom: 1em;
+      font-size: 1em;
+    }
+
+    .details .tags {
+      display: flex;
+      gap: .375em;
+      margin-bottom: .8em;
+      font-size: .85em;
+      flex-wrap: wrap;
+    }
+
+    .details .tags span {
+      padding: .35rem .65rem;
+      color: #01E9F8;
+      border: 1.5px solid #01E9F8;
+      border-radius: 50px;
     }
 
     p {
@@ -66,6 +208,24 @@
     h2 span {
       color: #01E9F8;
     }
+
+    .share-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #01E9F8;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      padding: 10px 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .share-button:hover {
+      background-color: #00b3d8;
+    }
   </style>
 </head>
 
@@ -74,70 +234,121 @@
   <section>
     <div class="container rounded-4">
       <div class="row justify-content-between align-items-center p-3">
-        <div class="col-12 col-lg-6">
-          <div>
-            <h2 class="display-6 fw-bold text-white mb-3">
-              <span><i class="fa-solid fa-user-secret"></i></span>
-              Security <span>Algorithm</span> Visualization <span>Tool</span>
-            </h2>
-            <p>
-              <!-- Add your description here -->
-            </p>
-            <div class="mt-5">
-              <button class="btn rounded-5 apps-store" onclick="window.location.href='AES/index.html';">
-                <span class="d-flex align-items-center">
-                  <span><i class="fa-solid fa-lock"></i></span>
-                  <div class="ms-2 d-flex flex-column text-start">
-                    <span class="">Algorithm</span>
-                    <span class="">AES</span>
-                  </div>
-                </span>
-              </button>
+        <div class="col-12">
+          <h2 class="display-6 fw-bold text-white mb-5 text-center">
+            <span><i class="fa-solid fa-user-secret"></i></span>
+            Security <span>Algorithm</span> Visualization <span>Tool</span>
+          </h2>
+          
+          <div class="wrapper">
+            <!-- AES Card -->
+            <div class="card" onclick="window.location.href='AES/index.html';">
+              <div class="poster">
+                <img src="Images/AES.jpeg" alt="AES Algorithm">
+              </div>
+              <div class="details">
+                <h1>AES Algorithm</h1>
+                <div class="tags">
+                  <span>Symmetric</span>
+                  <span>Block Cipher</span>
+                  <span>128-bit</span>
+                </div>
+                <p class="desc">
+                  Advanced Encryption Standard (AES) is a symmetric block cipher chosen by the U.S. government to protect classified information.
+                </p>
+              </div>
+            </div>
 
-              <button class="btn rounded-5 apps-store ms-3" onclick="window.location.href='DES/index.html';">
-                <span class="d-flex align-items-center">
-                  <span><i class="fa-solid fa-shield-alt"></i></span>
-                  <div class="ms-2 d-flex flex-column text-start">
-                    <span class="">Algorithm</span>
-                    <span class="">DES</span>
-                  </div>
-                </span>
-              </button>
+            <!-- DES Card -->
+            <div class="card" onclick="window.location.href='DES/index.html';">
+              <div class="poster">
+                <img src="Images/DES.png" alt="DES Algorithm">
+              </div>
+              <div class="details">
+                <h1>DES Algorithm</h1>
+                <div class="tags">
+                  <span>Symmetric</span>
+                  <span>Block Cipher</span>
+                  <span>56-bit</span>
+                </div>
+                <p class="desc">
+                  Data Encryption Standard (DES) is a symmetric-key block cipher published by the National Institute of Standards and Technology (NIST).
+                </p>
+              </div>
+            </div>
 
-              <button class="btn rounded-5 apps-store ms-3" onclick="window.location.href='Imp.html';">
-                <span class="d-flex align-items-center">
-                  <span><i class="fa-solid fa-key"></i></span>
-                  <div class="ms-2 d-flex flex-column text-start">
-                    <span class="">Algorithm</span>
-                    <span class="">RSA</span>
-                  </div>
-                </span>
-              </button>
+            <!-- RSA Card -->
+            <div class="card" onclick="window.location.href='RSA/index.html';">
+              <div class="poster">
+                <img src="Images/RSA.jpeg" alt="RSA Algorithm">
+              </div>
+              <div class="details">
+                <h1>RSA Algorithm</h1>
+                <div class="tags">
+                  <span>Asymmetric</span>
+                  <span>Public Key</span>
+                  <span>Cryptography</span>
+                </div>
+                <p class="desc">
+                  RSA (Rivest–Shamir–Adleman) is a public-key cryptosystem widely used for secure data transmission.
+                </p>
+              </div>
+            </div>
 
-              <button class="btn rounded-5 apps-store mt-3" onclick="window.location.href='Imp.html';">
-                <span class="d-flex align-items-center">
-                  <span><i class="fa-solid fa-shield-halved"></i></span>
-                  <div class="ms-2 d-flex flex-column text-start">
-                    <span class="">Algorithm</span>
-                    <span class="">Triple DES</span>
-                  </div>
-                </span>
-              </button>
+            <!-- SHA-256 Card -->
+            <div class="card" onclick="window.location.href='Imp.html';">
+              <div class="poster">
+                <img src="Images/SHA.jpeg" alt="SHA-256 Algorithm">
+              </div>
+              <div class="details">
+                <h1>SHA-256</h1>
+                <div class="tags">
+                  <span>Hash Function</span>
+                  <span>256-bit</span>
+                  <span>One-way</span>
+                </div>
+                <p class="desc">
+                  SHA-256 is a cryptographic hash function that generates a fixed-size 256-bit (32-byte) hash value.
+                </p>
+              </div>
+            </div>
 
-              <button class="btn rounded-5 apps-store ms-3 mt-3" onclick="window.location.href='Imp.html';">
-                <span class="d-flex align-items-center">
-                  <span><i class="fa-solid fa-atom"></i></span>
-                  <div class="ms-2 d-flex flex-column text-start">
-                    <span class="">Algorithm</span>
-                    <span class="">Quantum</span>
-                  </div>
-                </span>
-              </button>
+            <!-- Quantum Card -->
+            <div class="card" onclick="window.location.href='Quantum/index.html';">
+              <div class="poster">
+                <img src="Images/QUANTUM.jpeg" alt="Quantum Cryptography">
+              </div>
+              <div class="details">
+                <h1>Quantum Cryptography</h1>
+                <div class="tags">
+                  <span>Quantum</span>
+                  <span>Key Distribution</span>
+                  <span>Future</span>
+                </div>
+                <p class="desc">
+                  Quantum cryptography uses principles of quantum mechanics to guarantee secure communication.
+                </p>
+              </div>
+            </div>
+
+            <!-- Blowfish Card -->
+            <div class="card" onclick="window.location.href='Blowfish/index.html';">
+              <div class="poster">
+                <img src="Images/BLOWFISH.png" alt="Blowfish Algorithm">
+              </div>
+              <div class="details">
+                <h1>Blowfish Algorithm</h1>
+                <div class="tags">
+                  <span>Symmetric</span>
+                  <span>Block Cipher</span>
+                  <span>Variable Key</span>
+                </div>
+                <p class="desc">
+                  Blowfish is a symmetric-key block cipher with a variable key length from 32 bits to 448 bits.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col-12 col-lg-6 text-lg-end img-bg">
-          <img src="assets/img/crypto currency/store-bg.png" alt="" class="img-fluid position-relative">
         </div>
       </div>
     </div>
@@ -145,23 +356,62 @@
 
   <!-- Comparison Button centered -->
   <section class="text-center mt-5">
-    <button class="btn rounded-5 apps-store" onclick="window.location.href='Comparison.html';">
+    <button class="btn rounded-5 apps-store" onclick="toggleChat()">
       <span class="d-flex align-items-center justify-content-center">
-        <span><i class="fa-solid fa-chart-bar"></i></span>
+        <span><i class="fa-solid fa-robot"></i></span>
         <div class="ms-2 d-flex flex-column text-start">
-          <span class="">Algorithm</span>
-          <span class="">Comparison</span>
+          <span class="">AI</span>
+          <span class="">Assistant</span>
         </div>
       </span>
     </button>
   </section>
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap');
-  </style>
+  <!-- Chatbot Container -->
+  <div class="chat-container" id="chat-container">
+    <div class="chat-header">AI Security Assistant</div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input">
+      <input type="text" id="user-input" placeholder="Ask about security algorithms..." onkeypress="if(event.key === 'Enter') handleUserInput()">
+      <button onclick="handleUserInput()">Send</button>
+    </div>
+  </div>
+
+  <!-- Share Button -->
+  <button class="share-button" onclick="sharePage()">
+    <i class="fa-solid fa-share-alt"></i>
+  </button>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script>
+    function sharePage() {
+      // Use the Web Share API if available
+      if (navigator.share) {
+        navigator.share({
+          title: 'Security Algorithm Visualization Tool',
+          url: window.location.href,
+        }).then(() => {
+          console.log('Share successful');
+        }).catch((error) => {
+          console.error('Error sharing:', error);
+        });
+      } else {
+        alert('Sharing is not supported in this browser.');
+      }
+    }
 
+    function toggleChat() {
+      const chatContainer = document.getElementById('chat-container');
+      chatContainer.style.display = chatContainer.style.display === 'none' || chatContainer.style.display === '' 
+        ? 'flex' 
+        : 'none';
+    }
+  </script>
+
+  <!-- Add these before the closing body tag -->
+  <link rel="stylesheet" href="css/chatbot.css">
+  <script src="js/chatbot.js"></script>
 </body>
 
 </html>

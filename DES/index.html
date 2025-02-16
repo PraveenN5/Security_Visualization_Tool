@@ -170,6 +170,259 @@ function handleComplete() {
     </script>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/application.css" rel="stylesheet">
+    <style>
+        /* Add these styles */
+        .explanation-text {
+            font-size: 1.1rem !important;
+            line-height: 1.6 !important;
+        }
+        
+        .transformation-box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .step-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .bit-cell {
+            background: #f3f4f6;
+            padding: 0.5rem;
+            text-align: center;
+            border-radius: 0.25rem;
+            font-family: monospace;
+        }
+
+        .s-box-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .s-box-table th,
+        .s-box-table td {
+            padding: 0.5rem;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+    <!-- Add this after the existing styles -->
+    <style>
+        .des-diagram {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .bit-block {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border: 1px solid #cbd5e1;
+            margin: 2px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .bit-block.highlighted {
+            background: #ddd6fe;
+            border-color: #8b5cf6;
+        }
+
+        .arrow-down {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #6b7280;
+            margin: 1rem 0;
+        }
+
+        .des-round {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .half-block {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .s-box-diagram {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .s-box-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .key-schedule {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .round-key {
+            background: #e0e7ff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+        }
+    </style>
+    <style>
+        .s-box-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+
+        .s-box-tab {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.25rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .s-box-tab.active {
+            background: #8b5cf6;
+            color: white;
+            border-color: #7c3aed;
+        }
+
+        .s-box-content {
+            display: none;
+        }
+
+        .s-box-content.active {
+            display: block;
+        }
+
+        .example-grid {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+        }
+
+        .example-input {
+            line-height: 1.6;
+        }
+    </style>
+    <!-- Add these additional styles in the head section -->
+    <style>
+        .transformation-box {
+            background: linear-gradient(to bottom right, #ffffff, #f8fafc);
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .step-title {
+            color: #4f46e5;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-title i {
+            font-size: 1.25rem;
+        }
+
+        .explanation-box {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1rem 0;
+            border-left: 4px solid #818cf8;
+        }
+
+        .key-points {
+            background: #eef2ff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .key-points li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: start;
+            gap: 0.5rem;
+        }
+
+        .key-points li:before {
+            content: "•";
+            color: #6366f1;
+            font-weight: bold;
+        }
+
+        .visual-separator {
+            height: 2px;
+            background: linear-gradient(to right, #818cf8, transparent);
+            margin: 1.5rem 0;
+        }
+
+        .info-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #e0e7ff;
+            color: #4338ca;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            margin: 0.25rem;
+        }
+    </style>
+    <style>
+        .quiz-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #01E9F8;
+            color: #1F252E;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(1, 233, 248, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/quiz.css">
+    <script src="../js/chatbot.js"></script>
+    <script src="../js/quiz.js"></script>
 </head>
 <body>
     <header id="mainHeader">
@@ -220,5 +473,535 @@ function handleComplete() {
 		<div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:1200px; height:650px; position: absolute; left: 0px; top: 0px; display: block;">
 		</div>
 	</div>
+    <!-- Add DES Explanation Section -->
+    <div class="container mx-auto px-4 py-8">
+        <h2 class="text-2xl font-bold mb-6" style="color: #ffffff; background: #4f46e5; padding: 1rem; border-radius: 0.5rem; text-align: center;">
+            DES Algorithm Steps
+        </h2>
+
+        <!-- 1. Initial Permutation -->
+        <div class="transformation-box">
+            <h3 class="step-title">
+                <i class="fas fa-random"></i>
+                1. Initial Permutation (IP)
+            </h3>
+            <div class="explanation-box">
+                <p class="explanation-text">
+                    The Initial Permutation (IP) is the first step in the DES algorithm. It rearranges the 64 input bits in a fixed pattern.
+                    While this step doesn't provide cryptographic strength, it's crucial for the hardware implementation of DES.
+                </p>
+                <div class="key-points">
+                    <strong>Key Features:</strong>
+                    <ul>
+                        <li>Fixed permutation pattern that never changes</li>
+                        <li>Splits data into left (L₀) and right (R₀) halves</li>
+                        <li>Reversible through IP⁻¹ in the final step</li>
+                        <li>Helps in the efficient hardware implementation</li>
+                    </ul>
+                </div>
+                <div class="info-tag">Input: 64 bits</div>
+                <div class="info-tag">Output: 64 bits</div>
+            </div>
+            <div class="des-diagram">
+                <!-- Input block -->
+                <div class="text-center mb-4">
+                    <p class="font-medium mb-2">Input Block (64 bits)</p>
+                    <div class="bit-blocks">
+                        <!-- Generate 64 bit blocks in 8x8 grid -->
+                        <script>
+                            for(let i = 0; i < 64; i++) {
+                                document.write(`<div class="bit-block">${i+1}</div>`);
+                                if((i+1) % 8 === 0) document.write('<br>');
+                            }
+                        </script>
+                    </div>
+                </div>
+                <div class="arrow-down">↓</div>
+                <!-- Permuted output -->
+                <div class="text-center">
+                    <p class="font-medium mb-2">After IP</p>
+                    <div class="bit-blocks">
+                        <!-- Show permuted bits -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Round Function -->
+        <div class="transformation-box">
+            <h3 class="step-title">
+                <i class="fas fa-sync-alt"></i>
+                2. Round Function (16 rounds)
+            </h3>
+            <div class="explanation-box">
+                <p class="explanation-text">
+                    The core of DES consists of 16 identical rounds of processing. Each round scrambles the data in a complex way using substitution (S-boxes) and permutation operations.
+                </p>
+                
+                <div class="key-points">
+                    <strong>What happens in each round?</strong>
+                    <ul>
+                        <li>The input block is split into two 32-bit halves: Left (L) and Right (R)</li>
+                        <li>The Right half goes through several transformations while the Left half waits</li>
+                        <li>Finally, the transformed Right half is combined with the Left half</li>
+                        <li>The halves are then swapped for the next round</li>
+                    </ul>
+                </div>
+
+                <div class="visual-separator"></div>
+
+                <div class="round-steps">
+                    <p class="font-medium">Step-by-Step Round Process:</p>
+                    <ol class="list-decimal pl-6 space-y-4 mt-2">
+                        <li>
+                            <strong>Expansion (E):</strong>
+                            <p>The 32-bit Right half is expanded to 48 bits by duplicating some bits. This matches the size of the round key.</p>
+                        </li>
+                        <li>
+                            <strong>Key Mixing:</strong>
+                            <p>The expanded Right half is XORed with the round key (48 bits). Each round uses a different round key derived from the main key.</p>
+                        </li>
+                        <li>
+                            <strong>S-Box Substitution:</strong>
+                            <p>The 48-bit result is divided into eight 6-bit pieces. Each piece goes through a different S-box:</p>
+                            <ul class="list-disc pl-6 mt-2">
+                                <li>First 6 bits → S-Box 1</li>
+                                <li>Next 6 bits → S-Box 2</li>
+                                <li>And so on until S-Box 8</li>
+                                <li>Each S-box converts 6 bits into 4 bits using its lookup table</li>
+                                <li>The eight 4-bit outputs combine to form a 32-bit result</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Permutation (P):</strong>
+                            <p>The 32 bits are rearranged in a fixed pattern to further scramble the data.</p>
+                        </li>
+                        <li>
+                            <strong>Final XOR and Swap:</strong>
+                            <p>The result is XORed with the original Left half. Then the Left and Right halves are swapped for the next round.</p>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="info-box mt-4 bg-blue-50 p-4 rounded">
+                    <p class="font-medium">Why 16 rounds?</p>
+                    <p>DES uses 16 rounds to ensure:</p>
+                    <ul class="list-disc pl-6">
+                        <li>Each input bit affects every output bit multiple times</li>
+                        <li>The encryption is strong enough to resist attacks</li>
+                        <li>The pattern is complex enough to hide relationships between input and output</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. S-Box Substitution -->
+        <div class="transformation-box">
+            <h3 class="step-title">
+                <i class="fas fa-table"></i>
+                3. S-Box Substitution (The Heart of DES Security)
+            </h3>
+            <div class="explanation-box">
+                <p class="explanation-text">
+                    S-boxes (Substitution boxes) are the core security component of DES. They convert input bits to output bits in a non-linear way, making the encryption harder to break.
+                </p>
+
+                <div class="key-points">
+                    <strong>How S-boxes Work:</strong>
+                    <ul>
+                        <li>Each S-box takes 6 bits as input and produces 4 bits as output</li>
+                        <li>The first and last bits (bits 1,6) select one of four rows</li>
+                        <li>The middle four bits (bits 2,3,4,5) select one of sixteen columns</li>
+                        <li>The value at the selected row and column is the 4-bit output</li>
+                    </ul>
+                </div>
+
+                <div class="s-box-example bg-purple-50 p-4 rounded mt-4">
+                    <p class="font-medium">Example Lookup Process:</p>
+                    <ol class="list-decimal pl-6 space-y-2">
+                        <li>Input: 110011 (6 bits)</li>
+                        <li>Row selection: 11 (first and last bits) = row 3</li>
+                        <li>Column selection: 1001 (middle bits) = column 9</li>
+                        <li>Look up value in S-box at row 3, column 9</li>
+                        <li>Convert found value to 4-bit binary</li>
+                    </ol>
+                </div>
+
+                <div class="visual-separator"></div>
+
+                <div class="s-box-usage">
+                    <p class="font-medium">How the 8 S-boxes are Used:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                        <div class="bg-gray-50 p-4 rounded">
+                            <p class="font-medium">Input Processing:</p>
+                            <ul class="list-disc pl-6">
+                                <li>48-bit input is split into 8 groups of 6 bits</li>
+                                <li>First 6 bits → S1</li>
+                                <li>Next 6 bits → S2</li>
+                                <li>And so on until S8</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded">
+                            <p class="font-medium">Output Collection:</p>
+                            <ul class="list-disc pl-6">
+                                <li>Each S-box outputs 4 bits</li>
+                                <li>8 S-boxes × 4 bits = 32 bits total</li>
+                                <li>Outputs are combined in order: S1→S2→...→S8</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="visual-separator"></div>
+
+                <div class="s-box-diagram">
+                    <div class="s-box-tabs">
+                        <button class="s-box-tab active" onclick="showSBox(1)">S1</button>
+                        <button class="s-box-tab" onclick="showSBox(2)">S2</button>
+                        <button class="s-box-tab" onclick="showSBox(3)">S3</button>
+                        <button class="s-box-tab" onclick="showSBox(4)">S4</button>
+                        <button class="s-box-tab" onclick="showSBox(5)">S5</button>
+                        <button class="s-box-tab" onclick="showSBox(6)">S6</button>
+                        <button class="s-box-tab" onclick="showSBox(7)">S7</button>
+                        <button class="s-box-tab" onclick="showSBox(8)">S8</button>
+                    </div>
+
+                    <!-- Replace the empty S-box content divs with these complete ones -->
+                    <div id="s1" class="s-box-content active">
+                        <p class="font-medium mb-4">S-Box 1</p>
+                        <table class="s-box-table">
+                            <thead>
+                                <tr>
+                                    <th>Row/Col</th>
+                                    <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+                                    <th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>0</th>
+                                    <td>14</td><td>4</td><td>13</td><td>1</td><td>2</td><td>15</td><td>11</td><td>8</td>
+                                    <td>3</td><td>10</td><td>6</td><td>12</td><td>5</td><td>9</td><td>0</td><td>7</td>
+                                </tr>
+                                <tr>
+                                    <th>1</th>
+                                    <td>0</td><td>15</td><td>7</td><td>4</td><td>14</td><td>2</td><td>13</td><td>1</td>
+                                    <td>10</td><td>6</td><td>12</td><td>11</td><td>9</td><td>5</td><td>3</td><td>8</td>
+                                </tr>
+                                <tr>
+                                    <th>2</th>
+                                    <td>4</td><td>1</td><td>14</td><td>8</td><td>13</td><td>6</td><td>2</td><td>11</td>
+                                    <td>15</td><td>12</td><td>9</td><td>7</td><td>3</td><td>10</td><td>5</td><td>0</td>
+                                </tr>
+                                <tr>
+                                    <th>3</th>
+                                    <td>15</td><td>12</td><td>8</td><td>2</td><td>4</td><td>9</td><td>1</td><td>7</td>
+                                    <td>5</td><td>11</td><td>3</td><td>14</td><td>10</td><td>0</td><td>6</td><td>13</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="s2" class="s-box-content">
+                        <p class="font-medium mb-4">S-Box 2</p>
+                        <table class="s-box-table">
+                            <thead>
+                                <tr>
+                                    <th>Row/Col</th>
+                                    <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+                                    <th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>0</th>
+                                    <td>15</td><td>1</td><td>8</td><td>14</td><td>6</td><td>11</td><td>3</td><td>4</td>
+                                    <td>9</td><td>7</td><td>2</td><td>13</td><td>12</td><td>0</td><td>5</td><td>10</td>
+                                </tr>
+                                <tr>
+                                    <th>1</th>
+                                    <td>3</td><td>13</td><td>4</td><td>7</td><td>15</td><td>2</td><td>8</td><td>14</td>
+                                    <td>12</td><td>0</td><td>1</td><td>10</td><td>6</td><td>9</td><td>11</td><td>5</td>
+                                </tr>
+                                <tr>
+                                    <th>2</th>
+                                    <td>0</td><td>14</td><td>7</td><td>11</td><td>10</td><td>4</td><td>13</td><td>1</td>
+                                    <td>5</td><td>8</td><td>12</td><td>6</td><td>9</td><td>3</td><td>2</td><td>15</td>
+                                </tr>
+                                <tr>
+                                    <th>3</th>
+                                    <td>13</td><td>8</td><td>10</td><td>1</td><td>3</td><td>15</td><td>4</td><td>2</td>
+                                    <td>11</td><td>6</td><td>7</td><td>12</td><td>0</td><td>5</td><td>14</td><td>9</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="s3" class="s-box-content">
+                        <p class="font-medium mb-4">S-Box 3</p>
+                        <table class="s-box-table">
+                            <thead>
+                                <tr>
+                                    <th>Row/Col</th>
+                                    <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+                                    <th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>0</th>
+                                    <td>10</td><td>0</td><td>9</td><td>14</td><td>6</td><td>3</td><td>15</td><td>5</td>
+                                    <td>1</td><td>13</td><td>12</td><td>7</td><td>11</td><td>4</td><td>2</td><td>8</td>
+                                </tr>
+                                <tr>
+                                    <th>1</th>
+                                    <td>13</td><td>7</td><td>0</td><td>9</td><td>3</td><td>4</td><td>6</td><td>10</td>
+                                    <td>2</td><td>8</td><td>5</td><td>14</td><td>12</td><td>11</td><td>15</td><td>1</td>
+                                </tr>
+                                <tr>
+                                    <th>2</th>
+                                    <td>13</td><td>6</td><td>4</td><td>9</td><td>8</td><td>15</td><td>3</td><td>0</td>
+                                    <td>11</td><td>1</td><td>2</td><td>12</td><td>5</td><td>10</td><td>14</td><td>7</td>
+                                </tr>
+                                <tr>
+                                    <th>3</th>
+                                    <td>1</td><td>10</td><td>13</td><td>0</td><td>6</td><td>9</td><td>8</td><td>7</td>
+                                    <td>4</td><td>15</td><td>14</td><td>3</td><td>11</td><td>5</td><td>2</td><td>12</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="s4" class="s-box-content">
+                        <p class="font-medium mb-4">S-Box 4</p>
+                        <table class="s-box-table">
+                            <thead>
+                                <tr>
+                                    <th>Row/Col</th>
+                                    <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+                                    <th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>0</th>
+                                    <td>7</td><td>13</td><td>14</td><td>3</td><td>0</td><td>6</td><td>9</td><td>10</td>
+                                    <td>1</td><td>2</td><td>8</td><td>5</td><td>11</td><td>12</td><td>4</td><td>15</td>
+                                </tr>
+                                <tr>
+                                    <th>1</th>
+                                    <td>13</td><td>8</td><td>11</td><td>5</td><td>6</td><td>15</td><td>0</td><td>3</td>
+                                    <td>4</td><td>7</td><td>2</td><td>12</td><td>1</td><td>10</td><td>14</td><td>9</td>
+                                </tr>
+                                <tr>
+                                    <th>2</th>
+                                    <td>10</td><td>6</td><td>9</td><td>0</td><td>12</td><td>11</td><td>7</td><td>13</td>
+                                    <td>15</td><td>1</td><td>3</td><td>14</td><td>5</td><td>2</td><td>8</td><td>4</td>
+                                </tr>
+                                <tr>
+                                    <th>3</th>
+                                    <td>3</td><td>15</td><td>0</td><td>6</td><td>10</td><td>1</td><td>13</td><td>8</td>
+                                    <td>9</td><td>4</td><td>5</td><td>11</td><td>12</td><td>7</td><td>2</td><td>14</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="s5" class="s-box-content">
+                        <p class="font-medium mb-4">S-Box 5</p>
+                        <table class="s-box-table">
+                            <thead>
+                                <tr>
+                                    <th>Row/Col</th>
+                                    <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+                                    <th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>0</th>
+                                    <td>2</td><td>12</td><td>4</td><td>1</td><td>7</td><td>10</td><td>11</td><td>6</td>
+                                    <td>8</td><td>5</td><td>3</td><td>15</td><td>13</td><td>0</td><td>14</td><td>9</td>
+                                </tr>
+                                <tr>
+                                    <th>1</th>
+                                    <td>14</td><td>11</td><td>2</td><td>12</td><td>4</td><td>7</td><td>13</td><td>1</td>
+                                    <td>5</td><td>0</td><td>15</td><td>10</td><td>3</td><td>9</td><td>8</td><td>6</td>
+                                </tr>
+                                <tr>
+                                    <th>2</th>
+                                    <td>4</td><td>2</td><td>1</td><td>11</td><td>10</td><td>13</td><td>7</td><td>8</td>
+                                    <td>15</td><td>9</td><td>12</td><td>5</td><td>6</td><td>3</td><td>0</td><td>14</td>
+                                </tr>
+                                <tr>
+                                    <th>3</th>
+                                    <td>11</td><td>8</td><td>12</td><td>7</td><td>1</td><td>14</td><td>2</td><td>13</td>
+                                    <td>6</td><td>15</td><td>0</td><td>9</td><td>10</td><td>4</td><td>5</td><td>3</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="s6" class="s-box-content">
+                        <p class="font-medium mb-4">S-Box 6</p>
+                        <table class="s-box-table">
+                            <thead>
+                                <tr>
+                                    <th>Row/Col</th>
+                                    <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+                                    <th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>0</th>
+                                    <td>12</td><td>1</td><td>10</td><td>15</td><td>9</td><td>2</td><td>6</td><td>8</td>
+                                    <td>0</td><td>13</td><td>3</td><td>4</td><td>14</td><td>7</td><td>5</td><td>11</td>
+                                </tr>
+                                <tr>
+                                    <th>1</th>
+                                    <td>10</td><td>15</td><td>4</td><td>2</td><td>7</td><td>12</td><td>9</td><td>5</td>
+                                    <td>6</td><td>1</td><td>13</td><td>14</td><td>0</td><td>11</td><td>3</td><td>8</td>
+                                </tr>
+                                <tr>
+                                    <th>2</th>
+                                    <td>9</td><td>14</td><td>15</td><td>5</td><td>2</td><td>8</td><td>12</td><td>3</td>
+                                    <td>7</td><td>0</td><td>4</td><td>10</td><td>1</td><td>13</td><td>11</td><td>6</td>
+                                </tr>
+                                <tr>
+                                    <th>3</th>
+                                    <td>4</td><td>3</td><td>2</td><td>12</td><td>9</td><td>5</td><td>15</td><td>10</td>
+                                    <td>11</td><td>14</td><td>1</td><td>7</td><td>6</td><td>0</td><td>8</td><td>13</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="s7" class="s-box-content">
+                        <p class="font-medium mb-4">S-Box 7</p>
+                        <table class="s-box-table">
+                            <thead>
+                                <tr>
+                                    <th>Row/Col</th>
+                                    <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+                                    <th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>0</th>
+                                    <td>4</td><td>11</td><td>2</td><td>14</td><td>15</td><td>0</td><td>8</td><td>13</td>
+                                    <td>3</td><td>12</td><td>9</td><td>7</td><td>5</td><td>10</td><td>6</td><td>1</td>
+                                </tr>
+                                <tr>
+                                    <th>1</th>
+                                    <td>13</td><td>0</td><td>11</td><td>7</td><td>4</td><td>9</td><td>1</td><td>10</td>
+                                    <td>14</td><td>3</td><td>5</td><td>12</td><td>2</td><td>15</td><td>8</td><td>6</td>
+                                </tr>
+                                <tr>
+                                    <th>2</th>
+                                    <td>1</td><td>4</td><td>11</td><td>13</td><td>12</td><td>3</td><td>7</td><td>14</td>
+                                    <td>10</td><td>15</td><td>6</td><td>8</td><td>0</td><td>5</td><td>9</td><td>2</td>
+                                </tr>
+                                <tr>
+                                    <th>3</th>
+                                    <td>6</td><td>11</td><td>13</td><td>8</td><td>1</td><td>4</td><td>10</td><td>7</td>
+                                    <td>9</td><td>5</td><td>0</td><td>15</td><td>14</td><td>2</td><td>3</td><td>12</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="s8" class="s-box-content">
+                        <p class="font-medium mb-4">S-Box 8</p>
+                        <table class="s-box-table">
+                            <thead>
+                                <tr>
+                                    <th>Row/Col</th>
+                                    <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+                                    <th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>0</th>
+                                    <td>13</td><td>2</td><td>8</td><td>4</td><td>6</td><td>15</td><td>11</td><td>1</td>
+                                    <td>10</td><td>9</td><td>3</td><td>14</td><td>5</td><td>0</td><td>12</td><td>7</td>
+                                </tr>
+                                <tr>
+                                    <th>1</th>
+                                    <td>1</td><td>15</td><td>13</td><td>8</td><td>10</td><td>3</td><td>7</td><td>4</td>
+                                    <td>12</td><td>5</td><td>6</td><td>11</td><td>0</td><td>14</td><td>9</td><td>2</td>
+                                </tr>
+                                <tr>
+                                    <th>2</th>
+                                    <td>7</td><td>11</td><td>4</td><td>1</td><td>9</td><td>12</td><td>14</td><td>2</td>
+                                    <td>0</td><td>6</td><td>10</td><td>13</td><td>15</td><td>3</td><td>5</td><td>8</td>
+                                </tr>
+                                <tr>
+                                    <th>3</th>
+                                    <td>2</td><td>1</td><td>14</td><td>7</td><td>4</td><td>10</td><td>8</td><td>13</td>
+                                    <td>15</td><td>12</td><td>9</td><td>0</td><td>3</td><td>5</td><td>6</td><td>11</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Key Schedule -->
+        <div class="transformation-box">
+            <h3 class="text-xl font-semibold mb-4">4. Key Schedule</h3>
+            <div class="key-schedule">
+                <div class="original-key">
+                    <p class="font-medium mb-2">Original Key (64 bits)</p>
+                    <div class="bit-blocks">
+                        <!-- Original key bits -->
+                    </div>
+                </div>
+                <div class="arrow-down">↓</div>
+                <div class="permuted-key">
+                    <p class="font-medium mb-2">After PC-1 (56 bits)</p>
+                    <div class="bit-blocks">
+                        <!-- PC-1 result -->
+                    </div>
+                </div>
+                <div class="arrow-down">↓</div>
+                <div class="round-keys">
+                    <p class="font-medium mb-2">Round Keys (48 bits each)</p>
+                    <div class="round-key">K1: 110101...</div>
+                    <div class="round-key">K2: 001110...</div>
+                    <!-- Add more round keys -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Final Permutation -->
+        <div class="transformation-box">
+            <h3 class="text-xl font-semibold mb-4">5. Final Permutation (IP⁻¹)</h3>
+            <p class="explanation-text">
+                The inverse of the initial permutation is applied to produce the final output.
+                This is the exact reverse of the initial permutation.
+            </p>
+        </div>
+    </div>
+    <script>
+    function showSBox(boxNum) {
+        // Hide all S-box contents
+        document.querySelectorAll('.s-box-content').forEach(box => {
+            box.classList.remove('active');
+        });
+        
+        // Remove active class from all tabs
+        document.querySelectorAll('.s-box-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Show selected S-box and activate tab
+        document.getElementById(`s${boxNum}`).classList.add('active');
+        document.querySelector(`.s-box-tab:nth-child(${boxNum})`).classList.add('active');
+    }
+    </script>
+    <button class="quiz-button" onclick="startQuiz('DES')">Take Quiz</button>
+    
+    <div class="quiz-overlay" id="quizOverlay"></div>
+    <div class="quiz-modal" id="quizModal">
+        <span class="close-quiz" onclick="closeQuiz()">&times;</span>
+        <div id="quizContent"></div>
+    </div>
 </body>
 </html>

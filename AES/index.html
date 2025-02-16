@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>AES</title>
-  <link rel="stylesheet" href="grid.css">
+  <title>AES Algorithm Visualization</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     * {
       margin: 0;
@@ -23,6 +25,12 @@
       font-family: monospace;
       font-size: 15px;
       overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      color: #1f2937;
+      min-height: 100vh;
+      overflow-y: auto !important;
+      overflow-x: hidden;
     }
 
     table {
@@ -96,32 +104,1286 @@
       color: rgb(86, 242, 27);
     }
 
+    .animate-fade {
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    .info-box {
+      background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
+    }
+    .canvas-container {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 12px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .title-gradient {
+      background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    input, select {
+      background: white !important;
+      color: #1f2937 !important;
+      border: 1px solid #d1d5db !important;
+    }
+    input::placeholder {
+      color: #9ca3af !important;
+    }
+    select {
+      min-width: 150px;
+    }
+    .key-select-label {
+      color: #4b5563;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .explanation-text {
+        font-size: 1.1rem !important;
+        line-height: 1.6 !important;
+    }
+    
+    .matrix-cell {
+        font-size: 1.1rem !important;
+        padding: 0.75rem !important;
+    }
+    
+    .s-box-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+    
+    .s-box-table th,
+    .s-box-table td {
+        padding: 0.5rem;
+        text-align: center;
+        border: 1px solid #e5e7eb;
+        font-family: monospace;
+        font-size: 0.9rem;
+    }
+    
+    .s-box-table th {
+        background-color: #f3f4f6;
+        font-weight: bold;
+    }
+    
+    .s-box-table td:hover {
+        background-color: #ddd6fe;
+        transition: background-color 0.2s;
+    }
+    
+    .grid {
+        max-width: none !important;
+    }
+    
+    .card {
+        padding: 2rem !important;
+    }
+    
+    .info-box {
+        padding: 1.5rem !important;
+    }
+    
+    h1 {
+        font-size: 2.5rem !important;
+    }
+    
+    h2 {
+        font-size: 1.8rem !important;
+    }
+    
+    h3 {
+        font-size: 1.5rem !important;
+    }
+    
+    .canvas-container {
+        height: auto !important;
+        overflow: visible !important;
+    }
+    
+    .gap-8 {
+        gap: 2rem !important;
+    }
 
+    .flow-diagram {
+        max-width: 800px;
+        margin: 2rem auto;
+        text-align: center;
+    }
+
+    .flow-step {
+        padding: 1rem 2rem;
+        margin: 0.5rem auto;
+        border-radius: 25px;
+        width: 300px;
+        font-weight: 500;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .flow-step::after {
+        content: "↓";
+        position: absolute;
+        bottom: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 20px;
+        color: #6b7280;
+    }
+
+    .flow-step:last-child::after {
+        display: none;
+    }
+
+    .flow-step.active {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .flow-arrow {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 24px;
+        color: #6366f1;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .flow-arrow.active {
+        opacity: 1;
+        animation: moveArrow 1s infinite;
+    }
+
+    @keyframes moveArrow {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(10px); }
+    }
+
+    .initial-round {
+        background-color: #D1FAE5;
+        border: 2px solid #059669;
+        color: #065F46;
+    }
+
+    .sub-bytes {
+        background-color: #DBEAFE;
+        border: 2px solid #3B82F6;
+        color: #1E40AF;
+    }
+
+    .shift-rows {
+        background-color: #FCE7F3;
+        border: 2px solid #EC4899;
+        color: #9D174D;
+    }
+
+    .mix-columns {
+        background-color: #FEF3C7;
+        border: 2px solid #F59E0B;
+        color: #92400E;
+    }
+
+    .add-round-key {
+        background-color: #D1FAE5;
+        border: 2px solid #059669;
+        color: #065F46;
+    }
+
+    .round-loop {
+        border: 2px dashed #6B7280;
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+        position: relative;
+    }
+
+    .round-label {
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 0 1rem;
+        color: #6B7280;
+    }
+
+    .final-round {
+        margin-top: 2rem;
+        padding: 2rem;
+        border: 2px solid #E5E7EB;
+        border-radius: 15px;
+    }
+
+    .rounds-container {
+        max-height: 400px;  /* Fixed height for scroll area */
+        overflow-y: auto;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin: 1rem 0;
+        background: #f9fafb;
+    }
+
+    /* Custom scrollbar styling */
+    .rounds-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .rounds-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .rounds-container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+    .rounds-container::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    /* Ensure smooth scrolling */
+    .rounds-container {
+        scroll-behavior: smooth;
+    }
+
+    /* Style for round entries */
+    .round-entry {
+        background: white;
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .quiz-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #01E9F8;
+        color: #1F252E;
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(1, 233, 248, 0.3);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
   </style>
+  <link rel="stylesheet" href="../css/quiz.css">
+  <script src="../js/chatbot.js"></script>
+  <script src="../js/quiz.js"></script>
 </head>
 <body>
+  <div class="container mx-auto px-4 py-8 max-w-full">
+    <h1 class="text-3xl font-bold text-center mb-8 title-gradient">AES Algorithm Visualization</h1>
 
-  <div class="row">
-    <div class="col span-5-of-12" id="input-panel">
-      <h2>AES Algorithm-128</h2>
-      <br><br>
-      <div class="user-inputs">
-        plain text :
-        <br>
-        <input placeholder="enter text here" type="text" id="plain_text">
-        <br><br>
-        key : <br>
-        <input placeholder="enter text here" type="text" id="key">
-        <br><br>
-        <button onclick="aes_init()">encrypt</button>
-        <br><br>
+    <!-- Input Section -->
+    <div class="card rounded-lg mb-8 p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h2 class="text-xl font-semibold mb-4">Input Message</h2>
+          <input 
+            type="text" 
+            id="messageInput" 
+            placeholder="Enter message to encrypt"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+        </div>
+        <div>
+          <h2 class="text-xl font-semibold mb-4">Key</h2>
+          <div class="flex gap-2">
+            <div class="flex flex-col">
+              <label for="keySize" class="key-select-label">Key Size:</label>
+              <select 
+                id="keySize" 
+                class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                aria-label="Select key size"
+              >
+                <option value="128">128-bit (AES-128)</option>
+                <option value="192">192-bit (AES-192)</option>
+                <option value="256">256-bit (AES-256)</option>
+              </select>
+            </div>
+            <input 
+              type="text" 
+              id="keyInput" 
+              placeholder="Enter encryption key"
+              class="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+            <button 
+              onclick="generateRandomKey()"
+              class="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600 transition-colors"
+              title="Generate Random Key"
+            >
+              <i class="fas fa-random"></i>
+            </button>
+          </div>
+        </div>
       </div>
-
-      <div id="resultbox"></div>
+      <div class="mt-6 flex justify-center gap-4">
+        <button 
+          onclick="visualizeEncryption()"
+          class="bg-purple-500 text-white px-6 py-2 rounded-md hover:bg-purple-600 transition-colors"
+        >
+          Encrypt
+        </button>
+        <button 
+          onclick="visualizeDecryption()"
+          class="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors"
+        >
+          Decrypt
+        </button>
+      </div>
     </div>
 
-    <div class="col span-7-of-12" id="results-container"></div>
+    <!-- Visualization Grid -->
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Step 1: Initial Round -->
+      <div class="card rounded-lg p-6">
+        <h3 class="text-lg font-semibold mb-2">1. Initial Round</h3>
+        <div class="info-box p-4 rounded-md mb-4">
+          <p class="font-medium">AddRoundKey Operation:</p>
+          <div class="mt-2 space-y-2">
+            <div class="bg-white p-3 rounded">
+              <p class="text-sm">The input is arranged in a 4x4 matrix of bytes:</p>
+              <div class="grid grid-cols-4 gap-1 mt-2 font-mono text-xs">
+                <div class="bg-purple-50 p-1 text-center">b0</div>
+                <div class="bg-purple-50 p-1 text-center">b4</div>
+                <div class="bg-purple-50 p-1 text-center">b8</div>
+                <div class="bg-purple-50 p-1 text-center">b12</div>
+                <div class="bg-purple-50 p-1 text-center">b1</div>
+                <div class="bg-purple-50 p-1 text-center">b5</div>
+                <div class="bg-purple-50 p-1 text-center">b9</div>
+                <div class="bg-purple-50 p-1 text-center">b13</div>
+                <div class="bg-purple-50 p-1 text-center">b2</div>
+                <div class="bg-purple-50 p-1 text-center">b6</div>
+                <div class="bg-purple-50 p-1 text-center">b10</div>
+                <div class="bg-purple-50 p-1 text-center">b14</div>
+                <div class="bg-purple-50 p-1 text-center">b3</div>
+                <div class="bg-purple-50 p-1 text-center">b7</div>
+                <div class="bg-purple-50 p-1 text-center">b11</div>
+                <div class="bg-purple-50 p-1 text-center">b15</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="initialRound" class="space-y-4"></div>
+      </div>
+
+      <!-- Step 2: Main Rounds -->
+      <div class="card rounded-lg p-6">
+        <h3 class="text-lg font-semibold mb-2">2. Main Rounds (1-9)</h3>
+        <div class="info-box p-4 rounded-md mb-4">
+          <p class="font-medium mb-4">Four Transformations Explained:</p>
+          
+          <!-- 1. SubBytes -->
+          <div class="bg-white p-6 rounded mb-4">
+            <p class="font-medium text-lg mb-3">1. SubBytes Transformation:</p>
+            <div class="grid grid-cols-1 gap-6 mt-4">
+                <div>
+                    <p class="text-gray-600 mb-4 explanation-text">Each byte in the state matrix is replaced using the S-box lookup table. This provides non-linearity to the cipher:</p>
+                    <div class="bg-purple-50 p-4 rounded mb-4">
+                        <p class="font-medium mb-2 explanation-text">How to use the S-box:</p>
+                        <ol class="list-decimal list-inside space-y-2 explanation-text">
+                            <li>Split byte into two parts (e.g., 53 → 5,3)</li>
+                            <li>Use first digit for row (5), second for column (3)</li>
+                            <li>Find the intersection in the table</li>
+                        </ol>
+                    </div>
+                </div>
+                <div>
+                    <p class="font-medium mb-2 explanation-text">Complete S-box Lookup Table:</p>
+                    <div class="overflow-x-auto">
+                        <table class="s-box-table">
+                            <tr>
+                                <th>x/y</th>
+                                <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th>
+                                <th>7</th><th>8</th><th>9</th><th>A</th><th>B</th><th>C</th><th>D</th>
+                                <th>E</th><th>F</th>
+                            </tr>
+                            <tr>
+                                <th>0</th>
+                                <td>63</td><td>7C</td><td>77</td><td>7B</td><td>F2</td><td>6B</td><td>6F</td>
+                                <td>C5</td><td>30</td><td>01</td><td>67</td><td>2B</td><td>FE</td><td>D7</td>
+                                <td>AB</td><td>76</td>
+                            </tr>
+                            <tr>
+                                <th>1</th>
+                                <td>CA</td><td>82</td><td>C9</td><td>7D</td><td>FA</td><td>59</td><td>47</td>
+                                <td>F0</td><td>AD</td><td>D4</td><td>A2</td><td>AF</td><td>9C</td><td>A4</td>
+                                <td>72</td><td>C0</td>
+                            </tr>
+                            <tr>
+                                <th>2</th>
+                                <td>B7</td><td>FD</td><td>93</td><td>26</td><td>36</td><td>3F</td><td>F7</td>
+                                <td>CC</td><td>34</td><td>A5</td><td>E5</td><td>F1</td><td>71</td><td>D8</td>
+                                <td>31</td><td>15</td>
+                            </tr>
+                            <tr>
+                                <th>3</th>
+                                <td>04</td><td>C7</td><td>23</td><td>C3</td><td>18</td><td>96</td><td>05</td>
+                                <td>9A</td><td>07</td><td>12</td><td>80</td><td>E2</td><td>EB</td><td>27</td>
+                                <td>B2</td><td>75</td>
+                            </tr>
+                            <tr>
+                                <th>4</th>
+                                <td>09</td><td>83</td><td>2C</td><td>1A</td><td>1B</td><td>6E</td><td>5A</td>
+                                <td>A0</td><td>52</td><td>3B</td><td>D6</td><td>B3</td><td>29</td><td>E3</td>
+                                <td>2F</td><td>84</td>
+                            </tr>
+                            <tr>
+                                <th>5</th>
+                                <td>53</td><td>D1</td><td>00</td><td>ED</td><td>20</td><td>FC</td><td>B1</td>
+                                <td>5B</td><td>6A</td><td>CB</td><td>BE</td><td>39</td><td>4A</td><td>4C</td>
+                                <td>58</td><td>CF</td>
+                            </tr>
+                            <tr>
+                                <th>6</th>
+                                <td>D0</td><td>EF</td><td>AA</td><td>FB</td><td>43</td><td>4D</td><td>33</td>
+                                <td>85</td><td>45</td><td>F9</td><td>02</td><td>7F</td><td>50</td><td>3C</td>
+                                <td>9F</td><td>A8</td>
+                            </tr>
+                            <tr>
+                                <th>7</th>
+                                <td>51</td><td>A3</td><td>40</td><td>8F</td><td>92</td><td>9D</td><td>38</td>
+                                <td>F5</td><td>BC</td><td>B6</td><td>DA</td><td>21</td><td>10</td><td>FF</td>
+                                <td>F3</td><td>D2</td>
+                            </tr>
+                            <tr>
+                                <th>8</th>
+                                <td>CD</td><td>0C</td><td>13</td><td>EC</td><td>5F</td><td>97</td><td>44</td>
+                                <td>17</td><td>C4</td><td>A7</td><td>7E</td><td>3D</td><td>64</td><td>5D</td>
+                                <td>19</td><td>73</td>
+                            </tr>
+                            <tr>
+                                <th>9</th>
+                                <td>60</td><td>81</td><td>4F</td><td>DC</td><td>22</td><td>2A</td><td>90</td>
+                                <td>88</td><td>46</td><td>EE</td><td>B8</td><td>14</td><td>DE</td><td>5E</td>
+                                <td>0B</td><td>DB</td>
+                            </tr>
+                            <tr>
+                                <th>A</th>
+                                <td>E0</td><td>32</td><td>3A</td><td>0A</td><td>49</td><td>06</td><td>24</td>
+                                <td>5C</td><td>C2</td><td>D3</td><td>AC</td><td>62</td><td>91</td><td>95</td>
+                                <td>E4</td><td>79</td>
+                            </tr>
+                            <tr>
+                                <th>B</th>
+                                <td>E7</td><td>C8</td><td>37</td><td>6D</td><td>8D</td><td>D5</td><td>4E</td>
+                                <td>A9</td><td>6C</td><td>56</td><td>F4</td><td>EA</td><td>65</td><td>7A</td>
+                                <td>AE</td><td>08</td>
+                            </tr>
+                            <tr>
+                                <th>C</th>
+                                <td>BA</td><td>78</td><td>25</td><td>2E</td><td>1C</td><td>A6</td><td>B4</td>
+                                <td>C6</td><td>E8</td><td>DD</td><td>74</td><td>1F</td><td>4B</td><td>BD</td>
+                                <td>8B</td><td>8A</td>
+                            </tr>
+                            <tr>
+                                <th>D</th>
+                                <td>70</td><td>3E</td><td>B5</td><td>66</td><td>48</td><td>03</td><td>F6</td>
+                                <td>0E</td><td>61</td><td>35</td><td>57</td><td>B9</td><td>86</td><td>C1</td>
+                                <td>1D</td><td>9E</td>
+                            </tr>
+                            <tr>
+                                <th>E</th>
+                                <td>E1</td><td>F8</td><td>98</td><td>11</td><td>69</td><td>D9</td><td>8E</td>
+                                <td>94</td><td>9B</td><td>1E</td><td>87</td><td>E9</td><td>CE</td><td>55</td>
+                                <td>28</td><td>DF</td>
+                            </tr>
+                            <tr>
+                                <th>F</th>
+                                <td>8C</td><td>A1</td><td>89</td><td>0D</td><td>BF</td><td>E6</td><td>42</td>
+                                <td>68</td><td>41</td><td>99</td><td>2D</td><td>0F</td><td>B0</td><td>54</td>
+                                <td>BB</td><td>16</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Example: Input byte 53 → Look at row 5, column 3 → Output is ED</p>
+                </div>
+            </div>
+          </div>
+
+          <!-- 2. ShiftRows -->
+          <div class="bg-white p-6 rounded mb-4">
+            <p class="font-medium text-lg mb-3">2. ShiftRows Transformation:</p>
+            <div class="mt-4">
+                <p class="text-gray-600 mb-4 explanation-text">Each row is shifted cyclically to the left by a different number of positions:</p>
+                <div class="space-y-6">
+                    <div class="bg-purple-50 p-4 rounded">
+                        <p class="font-medium mb-3 explanation-text">Row-by-Row Shifting:</p>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4">
+                                <span class="font-medium w-24">Row 1:</span>
+                                <div class="bg-white p-2 rounded">
+                                    <p class="explanation-text">No shift (0 positions)</p>
+                                    <div class="grid grid-cols-4 gap-2 mt-1">
+                                        <div class="bg-blue-100 p-2 text-center">a0</div>
+                                        <div class="bg-blue-100 p-2 text-center">a1</div>
+                                        <div class="bg-blue-100 p-2 text-center">a2</div>
+                                        <div class="bg-blue-100 p-2 text-center">a3</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="font-medium w-24">Row 2:</span>
+                                <div class="bg-white p-2 rounded">
+                                    <p class="explanation-text">Shift left by 1</p>
+                                    <div class="grid grid-cols-4 gap-2 mt-1">
+                                        <div class="bg-green-100 p-2 text-center">b1</div>
+                                        <div class="bg-green-100 p-2 text-center">b2</div>
+                                        <div class="bg-green-100 p-2 text-center">b3</div>
+                                        <div class="bg-green-100 p-2 text-center">b0</div>
+                                    </div>
+                                    <div class="text-sm text-gray-500 mt-1">↑ b0 moves to end</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="font-medium w-24">Row 3:</span>
+                                <div class="bg-white p-2 rounded">
+                                    <p class="explanation-text">Shift left by 2</p>
+                                    <div class="grid grid-cols-4 gap-2 mt-1">
+                                        <div class="bg-yellow-100 p-2 text-center">c2</div>
+                                        <div class="bg-yellow-100 p-2 text-center">c3</div>
+                                        <div class="bg-yellow-100 p-2 text-center">c0</div>
+                                        <div class="bg-yellow-100 p-2 text-center">c1</div>
+                                    </div>
+                                    <div class="text-sm text-gray-500 mt-1">↑ c0,c1 move to end</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="font-medium w-24">Row 4:</span>
+                                <div class="bg-white p-2 rounded">
+                                    <p class="explanation-text">Shift left by 3</p>
+                                    <div class="grid grid-cols-4 gap-2 mt-1">
+                                        <div class="bg-red-100 p-2 text-center">d3</div>
+                                        <div class="bg-red-100 p-2 text-center">d0</div>
+                                        <div class="bg-red-100 p-2 text-center">d1</div>
+                                        <div class="bg-red-100 p-2 text-center">d2</div>
+                                    </div>
+                                    <div class="text-sm text-gray-500 mt-1">↑ d0,d1,d2 move to end</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+          <!-- 3. MixColumns -->
+          <div class="bg-white p-6 rounded mb-4">
+            <p class="font-medium text-lg mb-3">3. MixColumns Transformation:</p>
+            <div class="mt-4">
+                <p class="text-gray-600 mb-4 explanation-text">Each column is transformed using matrix multiplication in Galois Field (2⁸):</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-purple-50 p-6 rounded">
+                        <p class="font-medium mb-4 text-lg">Matrix Multiplication Formula:</p>
+                        <div class="space-y-4 font-mono text-lg">
+                            <div class="bg-white p-4 rounded">
+                                <p class="font-medium mb-2 text-base">For each column:</p>
+                                <p class="mb-2">Input bytes: [s0, s1, s2, s3]</p>
+                                <p class="mb-2">Output bytes: [r0, r1, r2, r3]</p>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded">
+                                <p class="font-medium mb-2 text-base">Calculations:</p>
+                                <div class="space-y-2">
+                                    <p>r0 = (2 × s0) ⊕ (3 × s1) ⊕ (1 × s2) ⊕ (1 × s3)</p>
+                                    <p>r1 = (1 × s0) ⊕ (2 × s1) ⊕ (3 × s2) ⊕ (1 × s3)</p>
+                                    <p>r2 = (1 × s0) ⊕ (1 × s1) ⊕ (2 × s2) ⊕ (3 × s3)</p>
+                                    <p>r3 = (3 × s0) ⊕ (1 × s1) ⊕ (1 × s2) ⊕ (2 × s3)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-6 rounded">
+                        <p class="font-medium mb-4 text-lg">Example with Real Values:</p>
+                        <div class="space-y-4">
+                            <div class="bg-white p-4 rounded">
+                                <p class="font-medium mb-2">Input Column:</p>
+                                <div class="grid grid-cols-4 gap-2 text-center">
+                                    <div class="bg-gray-100 p-2">s0 = 87</div>
+                                    <div class="bg-gray-100 p-2">s1 = F2</div>
+                                    <div class="bg-gray-100 p-2">s2 = 4D</div>
+                                    <div class="bg-gray-100 p-2">s3 = 97</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded">
+                                <p class="font-medium mb-2">Step-by-Step Calculation for r0:</p>
+                                <div class="space-y-2 font-mono">
+                                    <p>2 × 87 = 0F</p>
+                                    <p>3 × F2 = C1</p>
+                                    <p>1 × 4D = 4D</p>
+                                    <p>1 × 97 = 97</p>
+                                    <div class="border-t pt-2 mt-2">
+                                        <p>r0 = 0F ⊕ C1 ⊕ 4D ⊕ 97 = 47</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-green-50 p-4 rounded">
+                                <p class="font-medium mb-2">Important Notes:</p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Multiplication is in GF(2⁸)</li>
+                                    <li>⊕ represents XOR operation</li>
+                                    <li>Each byte is processed as a polynomial</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+          <!-- 4. AddRoundKey -->
+          <div class="bg-white p-6 rounded">
+            <p class="font-medium text-lg mb-3">4. AddRoundKey Transformation:</p>
+            <div class="mt-4">
+                <p class="text-gray-600 mb-4 explanation-text">Each byte of the state is combined with a byte of the round key using XOR operation:</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-purple-50 p-4 rounded">
+                        <p class="font-medium mb-3 explanation-text">Detailed Example:</p>
+                        <div class="space-y-4">
+                            <div class="bg-white p-3 rounded">
+                                <p class="font-medium mb-2">State byte: 53</p>
+                                <p class="font-mono text-lg">0101 0011</p>
+                            </div>
+                            <div class="text-center">⊕ (XOR)</div>
+                            <div class="bg-white p-3 rounded">
+                                <p class="font-medium mb-2">Round key: AF</p>
+                                <p class="font-mono text-lg">1010 1111</p>
+                            </div>
+                            <div class="text-center">=</div>
+                            <div class="bg-green-100 p-3 rounded">
+                                <p class="font-medium mb-2">Result: FC</p>
+                                <p class="font-mono text-lg">1111 1100</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded">
+                        <p class="font-medium mb-3 explanation-text">XOR Rules:</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-white p-3 rounded text-center">
+                                <p class="font-medium mb-2">0 ⊕ 0 = 0</p>
+                                <p class="font-medium mb-2">1 ⊕ 0 = 1</p>
+                                <p class="font-medium mb-2">0 ⊕ 1 = 1</p>
+                                <p class="font-medium mb-2">1 ⊕ 1 = 0</p>
+                            </div>
+                            <div class="bg-white p-3 rounded">
+                                <p class="font-medium mb-2">Key Properties:</p>
+                                <ul class="list-disc list-inside text-sm space-y-2">
+                                    <li>Reversible operation</li>
+                                    <li>Self-inverse (A⊕A = 0)</li>
+                                    <li>Easy to compute</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="rounds-container">
+          <div id="mainRounds" class="space-y-4"></div>
+        </div>
+      </div>
+
+      <!-- Step 3: Final Round -->
+      <div class="card rounded-lg p-6">
+        <h3 class="text-lg font-semibold mb-2">3. Final Round</h3>
+        <div class="info-box p-4 rounded-md mb-4">
+          <p class="font-medium">Final Transformations:</p>
+          <div class="space-y-2 mt-2">
+            <div class="bg-white p-2 rounded">
+              <p class="text-sm">Similar to main rounds but without MixColumns:</p>
+              <ol class="list-decimal list-inside text-xs mt-1 text-gray-600">
+                <li>SubBytes</li>
+                <li>ShiftRows</li>
+                <li>AddRoundKey</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div id="finalRound" class="space-y-4"></div>
+      </div>
+
+      <!-- Final Result -->
+      <div class="card rounded-lg p-6">
+        <h3 class="text-lg font-semibold mb-2">4. Final Result</h3>
+        <div class="info-box p-4 rounded-md mb-4">
+          <p class="font-medium">Security Features:</p>
+          <ul class="list-disc list-inside space-y-1 mt-2 text-sm">
+            <li>Strong confusion and diffusion</li>
+            <li>Resistant to known attacks</li>
+            <li>Mathematically proven security</li>
+          </ul>
+        </div>
+        <div id="finalResult" class="space-y-4"></div>
+      </div>
+    </div>
+
+    <!-- Add this HTML where you want to show the flow diagram -->
+    <div class="flow-diagram">
+        <!-- Initial AddRoundKey -->
+        <div class="flow-step initial-round">
+            AddRoundKey
+        </div>
+        <div class="flow-arrow">↓</div>
+
+        <!-- Main Rounds -->
+        <div class="round-loop">
+            <div class="round-label">Round 1</div>
+            
+            <div class="flow-step sub-bytes">
+                1 - SubBytes
+            </div>
+            <div class="flow-arrow">↓</div>
+            
+            <div class="flow-step shift-rows">
+                2 - ShiftRows
+            </div>
+            <div class="flow-arrow">↓</div>
+            
+            <div class="flow-step mix-columns">
+                3 - MixColumns
+            </div>
+            <div class="flow-arrow">↓</div>
+            
+            <div class="flow-step add-round-key">
+                4 - AddRoundKey
+            </div>
+        </div>
+        <div class="flow-arrow">↓</div>
+
+        <!-- Final Round -->
+        <div class="final-round">
+            <div class="flow-step sub-bytes">
+                SubBytes
+            </div>
+            <div class="flow-arrow">↓</div>
+            
+            <div class="flow-step shift-rows">
+                ShiftRows
+            </div>
+            <div class="flow-arrow">↓</div>
+            
+            <div class="flow-step add-round-key">
+                AddRoundKey
+            </div>
+        </div>
+    </div>
   </div>
+
+  <button class="quiz-button" onclick="startQuiz('AES')">Take Quiz</button>
+  
+  <div class="quiz-overlay" id="quizOverlay"></div>
+  <div class="quiz-modal" id="quizModal">
+      <span class="close-quiz" onclick="closeQuiz()">&times;</span>
+      <div id="quizContent"></div>
+  </div>
+
+  <script>
+    function generateRandomKey() {
+      const keySize = document.getElementById('keySize').value;
+      const length = keySize / 8; // Convert bits to bytes
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+      let key = '';
+      
+      // Generate random key of appropriate length
+      for (let i = 0; i < length; i++) {
+        key += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      
+      document.getElementById('keyInput').value = key;
+    }
+
+    function animateFlowStep(stepIndex, roundNumber = 1) {
+        // Reset all steps
+        document.querySelectorAll('.flow-step').forEach(step => {
+            step.classList.remove('active');
+        });
+        document.querySelectorAll('.flow-arrow').forEach(arrow => {
+            arrow.classList.remove('active');
+        });
+
+        // Get the current step and activate it
+        const steps = document.querySelectorAll('.flow-step');
+        if (steps[stepIndex]) {
+            steps[stepIndex].classList.add('active');
+            
+            // Update round label if in main rounds
+            const roundLabel = document.querySelector('.round-label');
+            if (roundNumber >= 1 && roundNumber <= 9) {
+                roundLabel.textContent = `Round ${roundNumber}`;
+            }
+        }
+    }
+
+    function visualizeEncryption() {
+        const message = document.getElementById('messageInput').value;
+        const key = document.getElementById('keyInput').value;
+        const keySize = document.getElementById('keySize').value;
+
+        if (!message || !key) {
+            alert('Please enter both message and key');
+            return;
+        }
+
+        // Clear previous visualizations
+        clearVisualizations();
+
+        // Initial AddRoundKey
+        showInitialRound(message, key);
+        animateFlowStep(0);
+
+        // Main rounds (1-9)
+        for (let round = 1; round <= 9; round++) {
+            setTimeout(() => {
+                // Show the round transformations
+                showMainRounds(message, key, round);
+                
+                // SubBytes
+                animateFlowStep(1, round);
+                
+                setTimeout(() => {
+                    // ShiftRows
+                    animateFlowStep(2, round);
+                    
+                    setTimeout(() => {
+                        // MixColumns
+                        animateFlowStep(3, round);
+                        
+                        setTimeout(() => {
+                            // AddRoundKey
+                            animateFlowStep(4, round);
+                        }, 500);
+                    }, 500);
+                }, 500);
+            }, round * 2000);
+        }
+
+        // Final round
+        setTimeout(() => {
+            showFinalRound(message, key);
+            // Final SubBytes
+            animateFlowStep(5);
+            
+            setTimeout(() => {
+                // Final ShiftRows
+                animateFlowStep(6);
+                
+                setTimeout(() => {
+                    // Final AddRoundKey
+                    animateFlowStep(7);
+                    // Show final result after all transformations
+                    showFinalResult(message, key, true);
+                }, 500);
+            }, 500);
+        }, 20000);
+    }
+
+    function showInitialRound(message, key) {
+        const initialRound = document.getElementById('initialRound');
+        initialRound.innerHTML = `
+            <div class="bg-white p-4 rounded-md animate-fade">
+                <p class="font-medium mb-2">Initial State:</p>
+                <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                    ${generateStateMatrix(message)}
+                </div>
+                <p class="font-medium mt-4 mb-2">After AddRoundKey:</p>
+                <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                    ${generateStateMatrix(message, true)}
+                </div>
+            </div>
+        `;
+    }
+
+    function showMainRounds(message, key, currentRound) {
+        const mainRounds = document.getElementById('mainRounds');
+        const roundContent = `
+            <div class="round-entry p-4 animate-fade">
+                <h4 class="font-medium mb-2">Round ${currentRound}</h4>
+                <div class="space-y-4">
+                    ${generateRoundSteps(message, key, currentRound)}
+                </div>
+            </div>
+        `;
+        
+        // Append or update round content
+        if (currentRound === 1) {
+            mainRounds.innerHTML = roundContent;
+        } else {
+            mainRounds.innerHTML += roundContent;
+        }
+
+        // Scroll to the latest round
+        const roundsContainer = document.querySelector('.rounds-container');
+        roundsContainer.scrollTop = roundsContainer.scrollHeight;
+    }
+
+    function showFinalRound(message, key) {
+        const finalRound = document.getElementById('finalRound');
+        finalRound.innerHTML = `
+            <div class="bg-white p-4 rounded-md animate-fade">
+                <p class="font-medium mb-2">Final Transformations:</p>
+                <div class="space-y-2">
+                    ${generateFinalSteps(message, key)}
+                </div>
+            </div>
+        `;
+    }
+
+    function showFinalResult(message, key, isEncrypt) {
+        const finalResult = document.getElementById('finalResult');
+        const result = isEncrypt ? encryptAES(message, key) : decryptAES(message, key);
+        
+        finalResult.innerHTML = `
+            <div class="bg-white p-4 rounded-md animate-fade">
+                <p class="font-medium mb-2">Final ${isEncrypt ? 'Encrypted' : 'Decrypted'} Result:</p>
+                <p class="font-mono bg-purple-50 p-2 rounded break-all">${result}</p>
+            </div>
+        `;
+    }
+
+    function clearVisualizations() {
+        document.getElementById('initialRound').innerHTML = '';
+        document.getElementById('mainRounds').innerHTML = '';
+        document.getElementById('finalRound').innerHTML = '';
+        document.getElementById('finalResult').innerHTML = '';
+    }
+
+    // Helper functions for visualization
+    function generateStateMatrix(text, isModified = false) {
+        let matrix = '';
+        for (let i = 0; i < 16; i++) {
+            const char = text[i] || ' ';
+            const hex = char.charCodeAt(0).toString(16).padStart(2, '0');
+            matrix += `
+                <div class="bg-${isModified ? 'purple' : 'gray'}-50 p-1 text-center">
+                    ${hex}
+                </div>
+            `;
+        }
+        return matrix;
+    }
+
+    function generateRoundSteps(message, key, round) {
+        return `
+            <div class="step-content">
+                <p class="font-medium mb-2">SubBytes:</p>
+                <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                    ${generateStateMatrix(message, false, round, 'subBytes')}
+                </div>
+                
+                <p class="font-medium mt-4 mb-2">ShiftRows:</p>
+                <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                    ${generateStateMatrix(message, false, round, 'shiftRows')}
+                </div>
+                
+                <p class="font-medium mt-4 mb-2">MixColumns:</p>
+                <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                    ${generateStateMatrix(message, false, round, 'mixColumns')}
+                </div>
+                
+                <p class="font-medium mt-4 mb-2">AddRoundKey:</p>
+                <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                    ${generateStateMatrix(message, true, round, 'addRoundKey')}
+                </div>
+            </div>
+        `;
+    }
+
+    function generateFinalSteps(message, key) {
+        return `
+            <div class="grid grid-cols-4 gap-1 font-mono text-xs">
+                ${generateStateMatrix(message, true)}
+            </div>
+        `;
+    }
+
+    // Simplified AES operations (for demonstration)
+    function encryptAES(message, key) {
+        // This is a simplified version for visualization
+        return Array.from(message)
+            .map(char => char.charCodeAt(0).toString(16).padStart(2, '0'))
+            .join('');
+    }
+
+    function decryptAES(message, key) {
+        // This is a simplified version for visualization
+        let result = '';
+        for (let i = 0; i < message.length; i += 2) {
+            result += String.fromCharCode(parseInt(message.substr(i, 2), 16));
+        }
+        return result;
+    }
+
+    function drawAESVisualization(canvas, currentRound, message, isEncrypt) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const startY = 50;
+        const boxSize = 40;
+        const spacing = 80;
+        
+        // Draw title
+        ctx.fillStyle = '#1F2937';
+        ctx.font = 'bold 16px Inter';
+        ctx.fillText(`AES ${isEncrypt ? 'Encryption' : 'Decryption'} - Round ${currentRound}/10`, 20, 30);
+
+        // Draw state matrix progression
+        let currentY = startY;
+        
+        // Initial state
+        drawStateMatrix(ctx, 50, currentY, message, 'Initial State');
+        currentY += spacing;
+
+        // SubBytes
+        if (currentRound > 0) {
+            drawTransformation(ctx, currentY, 'SubBytes');
+            drawStateMatrix(ctx, 50, currentY + 30, message, 'After SubBytes');
+            currentY += spacing;
+        }
+
+        // ShiftRows
+        if (currentRound > 1) {
+            drawTransformation(ctx, currentY, 'ShiftRows');
+            drawStateMatrix(ctx, 50, currentY + 30, message, 'After ShiftRows');
+            currentY += spacing;
+        }
+
+        // MixColumns
+        if (currentRound > 2) {
+            drawTransformation(ctx, currentY, 'MixColumns');
+            drawStateMatrix(ctx, 50, currentY + 30, message, 'After MixColumns');
+            currentY += spacing;
+        }
+
+        // AddRoundKey
+        if (currentRound > 3) {
+            drawTransformation(ctx, currentY, 'AddRoundKey');
+            drawStateMatrix(ctx, 50, currentY + 30, message, 'After AddRoundKey');
+        }
+    }
+
+    function drawStateMatrix(ctx, x, y, data, label) {
+        ctx.fillStyle = '#4B5563';
+        ctx.font = '12px Inter';
+        ctx.fillText(label, x, y - 5);
+
+        ctx.fillStyle = '#8B5CF6';
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                ctx.fillRect(x + j * 30, y + i * 30, 25, 25);
+            }
+        }
+    }
+
+    function drawTransformation(ctx, y, label) {
+        ctx.fillStyle = '#4B5563';
+        ctx.font = '14px Inter';
+        ctx.fillText(`↓ ${label}`, 50, y);
+    }
+
+    function visualizeDecryption() {
+        const message = document.getElementById('messageInput').value;
+        const key = document.getElementById('keyInput').value;
+        const keySize = document.getElementById('keySize').value;
+
+        if (!message || !key) {
+            alert('Please enter both message and key');
+            return;
+        }
+
+        // Clear previous visualizations
+        clearVisualizations();
+
+        // Initial AddRoundKey (inverse)
+        showInitialRound(message, key);
+        animateFlowStep(0);
+
+        // Inverse rounds (9-1)
+        for (let round = 9; round >= 1; round--) {
+            setTimeout(() => {
+                showMainRounds(message, key, round, true); // Added isDecrypt parameter
+                
+                // Inverse AddRoundKey
+                animateFlowStep(4, round);
+                
+                setTimeout(() => {
+                    // Inverse MixColumns
+                    animateFlowStep(3, round);
+                    
+                    setTimeout(() => {
+                        // Inverse ShiftRows
+                        animateFlowStep(2, round);
+                        
+                        setTimeout(() => {
+                            // Inverse SubBytes
+                            animateFlowStep(1, round);
+                        }, 500);
+                    }, 500);
+                }, 500);
+            }, (10 - round) * 2000);
+        }
+
+        // Final round
+        setTimeout(() => {
+            showFinalRound(message, key, true); // Added isDecrypt parameter
+            // Final Inverse AddRoundKey
+            animateFlowStep(7);
+            
+            setTimeout(() => {
+                // Final Inverse ShiftRows
+                animateFlowStep(6);
+                
+                setTimeout(() => {
+                    // Final Inverse SubBytes
+                    animateFlowStep(5);
+                    // Show final decrypted result
+                    showFinalResult(message, key, false);
+                }, 500);
+            }, 500);
+        }, 20000);
+    }
+
+    function showMainRounds(message, key, currentRound, isDecrypt = false) {
+        const mainRounds = document.getElementById('mainRounds');
+        const roundContent = `
+            <div class="round-entry p-4 animate-fade">
+                <h4 class="font-medium mb-2">${isDecrypt ? 'Inverse ' : ''}Round ${currentRound}</h4>
+                <div class="space-y-4">
+                    ${generateRoundSteps(message, key, currentRound, isDecrypt)}
+                </div>
+            </div>
+        `;
+        
+        // Append or update round content
+        if ((isDecrypt && currentRound === 9) || (!isDecrypt && currentRound === 1)) {
+            mainRounds.innerHTML = roundContent;
+        } else {
+            mainRounds.innerHTML += roundContent;
+        }
+
+        // Scroll to the latest round
+        const roundsContainer = document.querySelector('.rounds-container');
+        roundsContainer.scrollTop = roundsContainer.scrollHeight;
+    }
+
+    function generateRoundSteps(message, key, round, isDecrypt = false) {
+        if (isDecrypt) {
+            return `
+                <div class="step-content">
+                    <p class="font-medium mb-2">Inverse AddRoundKey:</p>
+                    <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                        ${generateStateMatrix(message, true, round, 'invAddRoundKey')}
+                    </div>
+                    
+                    <p class="font-medium mt-4 mb-2">Inverse MixColumns:</p>
+                    <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                        ${generateStateMatrix(message, false, round, 'invMixColumns')}
+                    </div>
+                    
+                    <p class="font-medium mt-4 mb-2">Inverse ShiftRows:</p>
+                    <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                        ${generateStateMatrix(message, false, round, 'invShiftRows')}
+                    </div>
+                    
+                    <p class="font-medium mt-4 mb-2">Inverse SubBytes:</p>
+                    <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                        ${generateStateMatrix(message, false, round, 'invSubBytes')}
+                    </div>
+                </div>
+            `;
+        }
+        return `
+            <div class="step-content">
+                <p class="font-medium mb-2">SubBytes:</p>
+                <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                    ${generateStateMatrix(message, false, round, 'subBytes')}
+                </div>
+                
+                <p class="font-medium mt-4 mb-2">ShiftRows:</p>
+                <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                    ${generateStateMatrix(message, false, round, 'shiftRows')}
+                </div>
+                
+                <p class="font-medium mt-4 mb-2">MixColumns:</p>
+                <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                    ${generateStateMatrix(message, false, round, 'mixColumns')}
+                </div>
+                
+                <p class="font-medium mt-4 mb-2">AddRoundKey:</p>
+                <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                    ${generateStateMatrix(message, true, round, 'addRoundKey')}
+                </div>
+            </div>
+        `;
+    }
+
+    function showFinalRound(message, key, isDecrypt = false) {
+        const finalRound = document.getElementById('finalRound');
+        finalRound.innerHTML = `
+            <div class="bg-white p-4 rounded-md animate-fade">
+                <p class="font-medium mb-2">${isDecrypt ? 'Final Inverse Transformations:' : 'Final Transformations:'}</p>
+                <div class="space-y-2">
+                    ${generateFinalSteps(message, key, isDecrypt)}
+                </div>
+            </div>
+        `;
+    }
+
+    function generateFinalSteps(message, key, isDecrypt = false) {
+        if (isDecrypt) {
+            return `
+                <div class="space-y-4">
+                    <div>
+                        <p class="font-medium mb-2">Inverse AddRoundKey:</p>
+                        <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                            ${generateStateMatrix(message, true)}
+                        </div>
+                    </div>
+                    <div>
+                        <p class="font-medium mb-2">Inverse ShiftRows:</p>
+                        <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                            ${generateStateMatrix(message, false)}
+                        </div>
+                    </div>
+                    <div>
+                        <p class="font-medium mb-2">Inverse SubBytes:</p>
+                        <div class="grid grid-cols-4 gap-1 font-mono text-sm">
+                            ${generateStateMatrix(message, false)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        return `
+            <div class="grid grid-cols-4 gap-1 font-mono text-xs">
+                ${generateStateMatrix(message, true)}
+            </div>
+        `;
+    }
+  </script>
 </body>
-<script src="main.js"></script>
 </html>

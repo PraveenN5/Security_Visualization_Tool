@@ -1,0 +1,41 @@
+/* Additional styles for quantum visualizations */
+.quantum-state {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    margin: 10px;
+    transition: all 0.3s ease;
+}
+
+.quantum-state::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 30px;
+    background: var(--primary-color);
+    transform-origin: center;
+}
+
+.quantum-state[data-basis="rectilinear"] ::before {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.quantum-state[data-basis="diagonal"] ::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.measurement-result {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(1, 233, 248, 0.1);
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+/* Add more specialized styles as needed */ 

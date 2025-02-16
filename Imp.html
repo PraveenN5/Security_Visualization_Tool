@@ -4,30 +4,839 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To Be Implemented</title>
+    <title>SHA-256 Visualization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e1e2f 0%, #2c2c44 100%);
         }
-        h1 {
-            color: #333;
+
+        .animate-fade {
+            animation: fadeIn 0.5s ease-in;
         }
-        p {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #555;
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+        }
+
+        .process-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        }
+
+        .canvas-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .title-gradient {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .step-animation {
+            background-color: #fff3cd;
+            transition: background-color 0.5s ease;
+        }
+
+        .quiz-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #01E9F8;
+            color: #1F252E;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(1, 233, 248, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
         }
     </style>
+    <link rel="stylesheet" href="css/quiz.css">
+    <script src="js/chatbot.js"></script>
+    <script src="js/quiz.js"></script>
 </head>
-<body>
-    <h1>To be implemented</h1>
-    <p>(RSA, Triple, Quantum)</p>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <h1 class="text-3xl font-bold text-center mb-8 title-gradient">SHA-256 Hash Algorithm Visualization</h1>
+        
+        <!-- Input Card -->
+        <div class="bg-white rounded-lg shadow-md mb-8 p-6">
+            <h2 class="text-xl font-semibold mb-4">Input Message</h2>
+            <div class="flex space-x-4">
+                <input 
+                    type="text" 
+                    id="messageInput" 
+                    placeholder="Enter message to hash"
+                    class="flex-grow px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                <button 
+                    onclick="visualizeHash()"
+                    class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors"
+                >
+                    Generate Hash
+                </button>
+            </div>
+        </div>
+
+        <!-- Visualization Grid -->
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Step 1: Message to Binary Conversion -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-2">1. Converting Message to Binary</h3>
+                <div class="bg-blue-50 p-4 rounded-md mb-4">
+                    <p class="font-medium">How does text become binary?</p>
+                    <div class="mt-2 space-y-4">
+                        <div class="bg-white p-3 rounded">
+                            <p class="font-medium text-sm">Example with the letter "A":</p>
+                            <ol class="list-decimal list-inside text-sm mt-2">
+                                <li>Letter "A" has ASCII value of 65</li>
+                                <li>65 in binary is: 01000001</li>
+                            </ol>
+                            <div class="mt-2 p-2 bg-gray-50 rounded">
+                                <p class="text-xs font-mono">A → 65 → 01000001</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-3 rounded">
+                            <p class="font-medium text-sm">Example with "Hi":</p>
+                            <ol class="list-decimal list-inside text-sm mt-2">
+                                <li>H (ASCII 72) → 01001000</li>
+                                <li>i (ASCII 105) → 01101001</li>
+                                <li>Combined: 01001000 01101001</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div id="binaryConversion" class="space-y-4"></div>
+            </div>
+
+            <!-- Step 2: Compression Variables Explained -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-2">2. Understanding the Variables</h3>
+                <div class="bg-blue-50 p-4 rounded-md mb-4">
+                    <p class="font-medium">What do these letters mean?</p>
+                    <div class="mt-2 space-y-4">
+                        <div class="bg-white p-3 rounded">
+                            <p class="font-medium text-sm">Working Variables (like mixing bowls):</p>
+                            <ul class="list-disc list-inside text-sm mt-2">
+                                <li>a, b, c, d, e, f, g, h - Eight "bowls" where we mix our data</li>
+                                <li>Each bowl holds a 32-bit number (like a recipe amount)</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-white p-3 rounded">
+                            <p class="font-medium text-sm">Operations (like cooking instructions):</p>
+                            <ul class="list-disc list-inside text-sm mt-2">
+                                <li>Ch (Choose): Picks bits from e, f, or g</li>
+                                <li>Maj (Majority): Takes the most common bit from a, b, and c</li>
+                                <li>Σ (Sigma): Rotates and shifts bits around</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-3 rounded">
+                            <p class="font-medium text-sm">Operations Visualized:</p>
+                            
+                            <!-- Choose (Ch) Operation Visualization -->
+                            <div class="border-l-4 border-blue-500 pl-3 mb-4">
+                                <p class="font-medium text-sm">Ch (Choose) Operation:</p>
+                                <div class="mt-2 bg-gray-50 p-3 rounded">
+                                    <div class="grid grid-cols-3 gap-2 text-center mb-2">
+                                        <div>
+                                            <p class="text-xs text-gray-500">e (selector)</p>
+                                            <p class="font-mono">1010</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500">f</p>
+                                            <p class="font-mono">1100</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500">g</p>
+                                            <p class="font-mono">0011</p>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="inline-block w-3 h-3 bg-green-500"></span>
+                                            <span class="text-xs">Where e is 1, pick from f</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="inline-block w-3 h-3 bg-red-500"></span>
+                                            <span class="text-xs">Where e is 0, pick from g</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 border-t pt-2">
+                                        <p class="text-xs font-medium">Result:</p>
+                                        <div class="font-mono text-sm">
+                                            <span class="text-green-500">11</span><span class="text-red-500">11</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Explanation: For positions where e=1 (1_1_), we took bits from f (11__), and where e=0 (_0_0), we took bits from g (__11)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Majority (Maj) Operation Visualization -->
+                            <div class="border-l-4 border-purple-500 pl-3 mb-4">
+                                <p class="font-medium text-sm">Maj (Majority) Operation:</p>
+                                <div class="mt-2 bg-gray-50 p-3 rounded">
+                                    <div class="grid grid-cols-3 gap-2 text-center mb-2">
+                                        <div>
+                                            <p class="text-xs text-gray-500">a</p>
+                                            <p class="font-mono">1011</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500">b</p>
+                                            <p class="font-mono">1001</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500">c</p>
+                                            <p class="font-mono">1101</p>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-4 gap-1 mt-3">
+                                        <div class="text-center">
+                                            <p class="text-xs font-mono">Bit 1</p>
+                                            <p class="text-xs">1,1,1</p>
+                                            <p class="font-mono text-green-500">1</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-xs font-mono">Bit 2</p>
+                                            <p class="text-xs">0,0,1</p>
+                                            <p class="font-mono text-red-500">0</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-xs font-mono">Bit 3</p>
+                                            <p class="text-xs">1,0,0</p>
+                                            <p class="font-mono text-red-500">0</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-xs font-mono">Bit 4</p>
+                                            <p class="text-xs">1,1,1</p>
+                                            <p class="font-mono text-green-500">1</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-2">Result is 1001 (majority wins for each position)</p>
+                                </div>
+                            </div>
+
+                            <!-- Sigma (Σ) Operation Visualization -->
+                            <div class="border-l-4 border-yellow-500 pl-3">
+                                <p class="font-medium text-sm">Σ (Sigma) Operation:</p>
+                                <div class="mt-2 bg-gray-50 p-3 rounded">
+                                    <p class="text-xs mb-2">Example with number: 1101 (original)</p>
+                                    <div class="space-y-3">
+                                        <div class="bg-white p-2 rounded">
+                                            <p class="text-xs font-medium">Right Rotate 1:</p>
+                                            <div class="flex items-center space-x-2">
+                                                <p class="font-mono">1101</p>
+                                                <span class="text-gray-500">→</span>
+                                                <p class="font-mono">1110</p>
+                                                <span class="text-xs text-gray-500">(last bit moves to front)</span>
+                                            </div>
+                                        </div>
+                                        <div class="bg-white p-2 rounded">
+                                            <p class="text-xs font-medium">Right Shift 2:</p>
+                                            <div class="flex items-center space-x-2">
+                                                <p class="font-mono">1101</p>
+                                                <span class="text-gray-500">→</span>
+                                                <p class="font-mono">0011</p>
+                                                <span class="text-xs text-gray-500">(add zeros from left)</span>
+                                            </div>
+                                        </div>
+                                        <div class="bg-white p-2 rounded">
+                                            <p class="text-xs font-medium">Final Step:</p>
+                                            <p class="text-xs">XOR all results together</p>
+                                            <div class="font-mono space-y-1">
+                                                <p>1101 (original)</p>
+                                                <p>1110 (rotated)</p>
+                                                <p>0011 (shifted)</p>
+                                                <div class="border-t">
+                                                    <p class="text-green-500">0000 (result)</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="variablesExplanation" class="space-y-4"></div>
+            </div>
+
+            <!-- Step 3: Compression -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-2">3. The Main Processing</h3>
+                <p class="text-sm text-gray-500 mb-4">This is where the actual hashing happens</p>
+                <div class="bg-blue-50 p-4 rounded-md mb-4">
+                    <p class="font-medium">What happens in this step?</p>
+                    <ul class="list-disc list-inside space-y-2 mt-2 text-sm">
+                        <li>We start with 8 special numbers (a through h)</li>
+                        <li>These numbers get mixed up 64 times</li>
+                        <li>Each mixing uses a piece of your message</li>
+                        <li>The mixing makes it impossible to reverse</li>
+                    </ul>
+                </div>
+                <div id="compression" class="space-y-4"></div>
+                <div id="compressionSteps" class="mt-4"></div>
+            </div>
+
+            <!-- Step 4: Final Hash -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-2">4. The Final Result</h3>
+                <p class="text-sm text-gray-500 mb-4">Your unique digital fingerprint</p>
+                <div class="bg-blue-50 p-4 rounded-md mb-4">
+                    <p class="font-medium">What makes this special?</p>
+                    <ul class="list-disc list-inside space-y-2 mt-2 text-sm">
+                        <li>Always 256 bits (64 characters) long</li>
+                        <li>Completely unique for each input</li>
+                        <li>Cannot be reversed to get your original message</li>
+                        <li>Even a tiny change creates a completely different hash</li>
+                    </ul>
+                </div>
+                <div id="finalHash" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <!-- Add this after the visualization grid -->
+        <div class="mt-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Visual Representation</h3>
+                <div class="flex justify-center">
+                    <canvas id="shaCanvas" width="800" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add this explanation section after the final hash section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mt-8">
+            <h3 class="text-lg font-semibold mb-2">Why Can't We Decrypt SHA-256?</h3>
+            
+            <div class="bg-blue-50 p-4 rounded-md mb-4">
+                <p class="font-medium mb-4">SHA-256 is a one-way function. Here's why:</p>
+                
+                <!-- Visual Example -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Left side: Encryption -->
+                    <div class="bg-white p-4 rounded-md">
+                        <p class="font-medium text-sm mb-3">Forward Process (Possible)</p>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <div class="w-32 p-2 bg-green-100 rounded">
+                                    <p class="text-xs">Input Message:</p>
+                                    <p class="font-mono text-sm">"Hello"</p>
+                                </div>
+                                <div class="mx-4 text-gray-400">→</div>
+                                <div class="flex-1 p-2 bg-green-100 rounded">
+                                    <p class="text-xs">SHA-256 Hash:</p>
+                                    <p class="font-mono text-xs break-all">185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-32 p-2 bg-green-100 rounded">
+                                    <p class="text-xs">Input Message:</p>
+                                    <p class="font-mono text-sm">"Hello!"</p>
+                                </div>
+                                <div class="mx-4 text-gray-400">→</div>
+                                <div class="flex-1 p-2 bg-green-100 rounded">
+                                    <p class="text-xs">SHA-256 Hash:</p>
+                                    <p class="font-mono text-xs break-all">8d9c05ec7ae14b5c54b2cf8c8bc71c3a4a0178bd8e3d641e5306b62f49a4ae0d</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right side: Why Decryption is Impossible -->
+                    <div class="bg-white p-4 rounded-md">
+                        <p class="font-medium text-sm mb-3">Reverse Process (Impossible)</p>
+                        <div class="space-y-4">
+                            <div class="p-3 bg-red-50 rounded-md">
+                                <p class="text-sm font-medium text-red-700">Why it's impossible:</p>
+                                <ul class="list-disc list-inside text-sm text-red-600 mt-2">
+                                    <li>Infinite possible inputs for each hash</li>
+                                    <li>Information is intentionally lost</li>
+                                    <li>Multiple messages can have same hash</li>
+                                </ul>
+                            </div>
+                            <div class="p-3 bg-yellow-50 rounded-md">
+                                <p class="text-sm font-medium">Common Uses:</p>
+                                <ul class="list-disc list-inside text-sm mt-2">
+                                    <li>Password storage</li>
+                                    <li>File integrity checking</li>
+                                    <li>Digital signatures</li>
+                                    <li>Blockchain/Bitcoin</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mathematical Explanation -->
+                <div class="mt-6 bg-white p-4 rounded-md">
+                    <p class="font-medium text-sm mb-3">Mathematical Perspective:</p>
+                    <div class="space-y-3 text-sm">
+                        <div class="p-2 bg-gray-50 rounded">
+                            <p class="font-medium">Input Space:</p>
+                            <p>Any message of any length</p>
+                            <p class="text-xs text-gray-500">Infinite possible inputs</p>
+                        </div>
+                        <div class="p-2 bg-gray-50 rounded">
+                            <p class="font-medium">Output Space:</p>
+                            <p>Fixed 256-bit (32-byte) hash</p>
+                            <p class="text-xs text-gray-500">2^256 possible outputs</p>
+                        </div>
+                        <div class="p-2 bg-gray-50 rounded">
+                            <p class="font-medium">Collision Property:</p>
+                            <p>Multiple inputs must map to the same output</p>
+                            <p class="text-xs text-gray-500">(Pigeonhole Principle)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="quiz-button" onclick="startQuiz('SHA')">Take Quiz</button>
+
+    <div class="quiz-overlay" id="quizOverlay"></div>
+    <div class="quiz-modal" id="quizModal">
+        <span class="close-quiz" onclick="closeQuiz()">&times;</span>
+        <div id="quizContent"></div>
+    </div>
+
+    <script>
+        function visualizeHash() {
+            const message = document.getElementById('messageInput').value;
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+
+            clearVisualizations();
+            
+            // Step 1: Show binary conversion
+            showBinaryConversion(message);
+
+            // Step 2: Show variables explanation
+            setTimeout(() => showVariablesExplanation(), 1500);
+
+            // Step 3: Show compression process
+            setTimeout(() => showCompression(message), 3000);
+
+            // Step 4: Show final hash
+            setTimeout(() => showFinalHash(message), 4500);
+
+            // Update canvas visualization
+            const canvas = document.getElementById('shaCanvas');
+            drawSHAProcess(canvas, message);
+        }
+
+        function showBinaryConversion(message) {
+            const binaryConversion = document.getElementById('binaryConversion');
+            const binary = stringToBinary(message);
+            
+            binaryConversion.innerHTML = `
+                <div class="space-y-2 animate-fade">
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <p class="font-medium">Message to Binary:</p>
+                        <p class="font-mono mt-2 text-sm">Original: "${message}"</p>
+                        <p class="font-mono mt-2 text-sm break-all">Binary: ${binary}</p>
+                        <p class="font-mono mt-2 text-sm">Length: ${binary.length} bits</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <p class="font-medium">Padding:</p>
+                        <p class="text-sm mt-2">1. Added '1' bit: ${binary}1</p>
+                        <p class="text-sm mt-2">2. Adding zeros until length = 448 (mod 512)</p>
+                        <p class="text-sm mt-2">3. Adding original length as 64-bit number</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showVariablesExplanation() {
+            const variablesExplanation = document.getElementById('variablesExplanation');
+            
+            variablesExplanation.innerHTML = `
+                <div class="space-y-2 animate-fade">
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <p class="font-medium">Initial Values:</p>
+                        <div class="grid grid-cols-2 gap-2 mt-2 font-mono text-sm">
+                            <div>h0 = 6a09e667</div>
+                            <div>h4 = 510e527f</div>
+                            <div>h1 = bb67ae85</div>
+                            <div>h5 = 9b05688c</div>
+                            <div>h2 = 3c6ef372</div>
+                            <div>h6 = 1f83d9ab</div>
+                            <div>h3 = a54ff53a</div>
+                            <div>h7 = 5be0cd19</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showCompression(message) {
+            const compression = document.getElementById('compression');
+            const steps = document.getElementById('compressionSteps');
+
+            compression.innerHTML = `
+                <div class="bg-gray-50 p-4 rounded-md animate-fade">
+                    <p class="font-medium mb-2">Compression Round Example:</p>
+                    
+                    <!-- Initial Values Display -->
+                    <div class="bg-white p-3 rounded mb-4">
+                        <p class="text-sm font-medium">Starting Values:</p>
+                        <div class="grid grid-cols-4 gap-2 mt-2 text-xs font-mono">
+                            <div class="p-1 bg-blue-100 rounded">a = 6a09e667</div>
+                            <div class="p-1 bg-blue-100 rounded">b = bb67ae85</div>
+                            <div class="p-1 bg-blue-100 rounded">c = 3c6ef372</div>
+                            <div class="p-1 bg-blue-100 rounded">d = a54ff53a</div>
+                            <div class="p-1 bg-green-100 rounded">e = 510e527f</div>
+                            <div class="p-1 bg-green-100 rounded">f = 9b05688c</div>
+                            <div class="p-1 bg-green-100 rounded">g = 1f83d9ab</div>
+                            <div class="p-1 bg-green-100 rounded">h = 5be0cd19</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 1: Calculate T1 -->
+                    <div class="bg-white p-3 rounded mb-3">
+                        <p class="text-sm font-medium">Step 1: Calculate T1</p>
+                        <div class="space-y-2 mt-2">
+                            <div class="flex items-center text-xs">
+                                <span class="w-20 font-mono">h</span>
+                                <span class="font-mono bg-gray-100 px-2 rounded">5be0cd19</span>
+                            </div>
+                            <div class="flex items-center text-xs">
+                                <span class="w-20 font-mono">Σ1(e)</span>
+                                <span class="font-mono bg-gray-100 px-2 rounded">2be54c71</span>
+                                <span class="ml-2 text-gray-500">(rotated & shifted)</span>
+                            </div>
+                            <div class="flex items-center text-xs">
+                                <span class="w-20 font-mono">Ch(e,f,g)</span>
+                                <span class="font-mono bg-gray-100 px-2 rounded">9b05688c</span>
+                                <span class="ml-2 text-gray-500">(chosen bits)</span>
+                            </div>
+                            <div class="flex items-center text-xs">
+                                <span class="w-20 font-mono">K[0]</span>
+                                <span class="font-mono bg-gray-100 px-2 rounded">428a2f98</span>
+                            </div>
+                            <div class="flex items-center text-xs">
+                                <span class="w-20 font-mono">W[0]</span>
+                                <span class="font-mono bg-gray-100 px-2 rounded">61626364</span>
+                                <span class="ml-2 text-gray-500">(message chunk)</span>
+                            </div>
+                            <div class="border-t pt-1">
+                                <div class="flex items-center text-xs">
+                                    <span class="w-20 font-mono font-bold">T1 =</span>
+                                    <span class="font-mono bg-yellow-100 px-2 rounded font-bold">7c9bd51e</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Calculate T2 -->
+                    <div class="bg-white p-3 rounded mb-3">
+                        <p class="text-sm font-medium">Step 2: Calculate T2</p>
+                        <div class="space-y-2 mt-2">
+                            <div class="flex items-center text-xs">
+                                <span class="w-20 font-mono">Σ0(a)</span>
+                                <span class="font-mono bg-gray-100 px-2 rounded">34aa2f98</span>
+                                <span class="ml-2 text-gray-500">(rotated & shifted)</span>
+                            </div>
+                            <div class="flex items-center text-xs">
+                                <span class="w-20 font-mono">Maj(a,b,c)</span>
+                                <span class="font-mono bg-gray-100 px-2 rounded">3c67ae85</span>
+                                <span class="ml-2 text-gray-500">(majority bits)</span>
+                            </div>
+                            <div class="border-t pt-1">
+                                <div class="flex items-center text-xs">
+                                    <span class="w-20 font-mono font-bold">T2 =</span>
+                                    <span class="font-mono bg-yellow-100 px-2 rounded font-bold">7111de1d</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Update Variables -->
+                    <div class="bg-white p-3 rounded">
+                        <p class="text-sm font-medium">Step 3: Update All Variables</p>
+                        <div class="mt-2 space-y-3">
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                                <div class="flex items-center">
+                                    <span class="w-12 font-mono">h = g</span>
+                                    <span class="font-mono bg-gray-100 px-2 rounded">1f83d9ab</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-12 font-mono">g = f</span>
+                                    <span class="font-mono bg-gray-100 px-2 rounded">9b05688c</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-12 font-mono">f = e</span>
+                                    <span class="font-mono bg-gray-100 px-2 rounded">510e527f</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-16 font-mono">e = d+T1</span>
+                                    <span class="font-mono bg-yellow-100 px-2 rounded">21eb4a58</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-12 font-mono">d = c</span>
+                                    <span class="font-mono bg-gray-100 px-2 rounded">3c6ef372</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-12 font-mono">c = b</span>
+                                    <span class="font-mono bg-gray-100 px-2 rounded">bb67ae85</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-12 font-mono">b = a</span>
+                                    <span class="font-mono bg-gray-100 px-2 rounded">6a09e667</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-16 font-mono">a = T1+T2</span>
+                                    <span class="font-mono bg-yellow-100 px-2 rounded">edad533b</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Round Counter -->
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-gray-600">This process repeats 64 times for each message block</p>
+                    <div class="mt-2 bg-gray-200 rounded-full h-2 max-w-md mx-auto">
+                        <div class="bg-blue-500 rounded-full h-2 w-1/64" id="roundProgress"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Round 1 of 64</p>
+                </div>
+            `;
+
+            // Animate the progress bar
+            let round = 1;
+            const progressBar = document.getElementById('roundProgress');
+            const interval = setInterval(() => {
+                if (round < 64) {
+                    round++;
+                    progressBar.style.width = `${(round/64) * 100}%`;
+                    document.querySelector('.text-xs.text-gray-500.mt-1').textContent = `Round ${round} of 64`;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+
+        async function showFinalHash(message) {
+            const finalHash = document.getElementById('finalHash');
+            
+            try {
+                const hash = await sha256(message);
+                finalHash.innerHTML = `
+                    <div class="animate-fade">
+                        <div class="bg-gray-50 p-4 rounded-md mb-4">
+                            <p class="font-medium mb-2">SHA-256 Hash:</p>
+                            <p class="font-mono text-sm break-all bg-yellow-100 p-2 rounded">${hash}</p>
+                        </div>
+                        <div class="text-sm text-gray-500 text-center">
+                            256 bits / 64 hexadecimal characters
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                finalHash.innerHTML = `
+                    <div class="bg-red-100 text-red-700 p-4 rounded-md">
+                        Error generating hash
+                    </div>
+                `;
+            }
+        }
+
+        function sha256(message) {
+            return crypto.subtle.digest('SHA-256', new TextEncoder().encode(message))
+                .then(hash => {
+                    return Array.from(new Uint8Array(hash))
+                        .map(b => b.toString(16).padStart(2, '0'))
+                        .join('');
+                });
+        }
+
+        function stringToBinary(str) {
+            return str.split('').map(char => 
+                char.charCodeAt(0).toString(2).padStart(8, '0')
+            ).join('');
+        }
+
+        function clearVisualizations() {
+            document.getElementById('binaryConversion').innerHTML = '';
+            document.getElementById('variablesExplanation').innerHTML = '';
+            document.getElementById('compression').innerHTML = '';
+            document.getElementById('compressionSteps').innerHTML = '';
+            document.getElementById('finalHash').innerHTML = '';
+        }
+
+        function drawSHAProcess(canvas, message) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const startX = 50;
+            const startY = 30;
+            const blockWidth = 120;
+            const blockHeight = 50;
+            const spacing = 40;
+
+            // Draw message input with binary representation
+            ctx.fillStyle = '#3B82F6';
+            const messageBox = {
+                x: startX,
+                y: startY,
+                width: blockWidth * 1.5,
+                height: blockHeight * 1.2
+            };
+            drawRoundedRect(ctx, messageBox.x, messageBox.y, messageBox.width, messageBox.height, 8);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Inter';
+            ctx.fillText('Input Message', messageBox.x + 20, messageBox.y + 25);
+            ctx.font = '12px monospace';
+            ctx.fillText(message.slice(0, 12) + '...', messageBox.x + 15, messageBox.y + 45);
+
+            // Draw arrow with padding info
+            drawArrow(ctx, messageBox.x + messageBox.width + 10, messageBox.y + messageBox.height/2, 
+                     messageBox.x + messageBox.width + 60, messageBox.y + messageBox.height/2);
+            ctx.font = '12px Inter';
+            ctx.fillStyle = '#666';
+            ctx.fillText('Add padding', messageBox.x + messageBox.width + 15, messageBox.y + messageBox.height/2 - 10);
+
+            // Draw padded message blocks
+            const blockStartX = messageBox.x + messageBox.width + 80;
+            const blocks = 3;
+            for(let i = 0; i < blocks; i++) {
+                ctx.fillStyle = '#10B981';
+                drawRoundedRect(ctx, blockStartX + (blockWidth + 20) * i, startY, 
+                               blockWidth, blockHeight, 8);
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Inter';
+                ctx.fillText(`512-bit Block ${i+1}`, blockStartX + (blockWidth + 20) * i + 15, startY + 30);
+            }
+
+            // Draw compression function section
+            const compStartY = startY + blockHeight + spacing * 2;
+            
+            // Draw initial hash values
+            ctx.fillStyle = '#8B5CF6';
+            const hashValuesBox = {
+                x: startX,
+                y: compStartY,
+                width: blockWidth,
+                height: blockHeight * 2
+            };
+            drawRoundedRect(ctx, hashValuesBox.x, hashValuesBox.y, hashValuesBox.width, hashValuesBox.height, 8);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 12px Inter';
+            ctx.fillText('Initial Hash Values', hashValuesBox.x + 10, hashValuesBox.y + 25);
+            ctx.font = '11px monospace';
+            ctx.fillText('h0: 6a09e667', hashValuesBox.x + 10, hashValuesBox.y + 45);
+            ctx.fillText('h1: bb67ae85', hashValuesBox.x + 10, hashValuesBox.y + 60);
+            ctx.fillText('h2: 3c6ef372', hashValuesBox.x + 10, hashValuesBox.y + 75);
+
+            // Draw compression function
+            const compBox = {
+                x: hashValuesBox.x + hashValuesBox.width + spacing,
+                y: compStartY,
+                width: blockWidth * 2,
+                height: blockHeight * 2
+            };
+            
+            // Draw multiple compression rounds
+            for(let i = 0; i < 4; i++) {
+                const roundY = compBox.y + i * (blockHeight/2 + 10);
+                ctx.fillStyle = '#EF4444';
+                drawRoundedRect(ctx, compBox.x, roundY, compBox.width, blockHeight/2, 8);
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Inter';
+                ctx.fillText(`Compression Round ${i+1}`, compBox.x + 20, roundY + 20);
+            }
+
+            // Draw final hash output
+            const finalY = compStartY + blockHeight * 3;
+            ctx.fillStyle = '#F59E0B';
+            drawRoundedRect(ctx, compBox.x + compBox.width + spacing, compStartY + blockHeight, 
+                           blockWidth * 1.5, blockHeight, 8);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Inter';
+            ctx.fillText('Final Hash (256 bits)', compBox.x + compBox.width + spacing + 20, 
+                        compStartY + blockHeight + 30);
+
+            // Draw connecting arrows
+            drawArrow(ctx, hashValuesBox.x + hashValuesBox.width + 10, 
+                     hashValuesBox.y + hashValuesBox.height/2,
+                     compBox.x - 10, hashValuesBox.y + hashValuesBox.height/2);
+            drawArrow(ctx, compBox.x + compBox.width + 10,
+                     compStartY + blockHeight * 1.5,
+                     compBox.x + compBox.width + spacing - 10,
+                     compStartY + blockHeight * 1.5);
+        }
+
+        // Helper functions for drawing
+        function drawRoundedRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawArrow(ctx, fromX, fromY, toX, toY) {
+            const headLength = 10;
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.lineTo(toX - headLength * Math.cos(angle - Math.PI/6),
+                      toY - headLength * Math.sin(angle - Math.PI/6));
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headLength * Math.cos(angle + Math.PI/6),
+                      toY - headLength * Math.sin(angle + Math.PI/6));
+            ctx.strokeStyle = '#6B7280';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+    </script>
 </body>
 </html>

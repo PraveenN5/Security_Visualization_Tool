@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blowfish Algorithm Visualization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+    <script src="../js/chatbot.js"></script>
+    <script src="../js/quiz.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        .animate-fade {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        }
+        .success-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        }
+        .warning-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        }
+        .canvas-container {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            border-radius: 12px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .title-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .quiz-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #01E9F8;
+            color: #1F252E;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(1, 233, 248, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <h1 class="text-3xl font-bold text-center mb-8 title-gradient">Blowfish Algorithm Visualization</h1>
+        
+        <!-- Input Section -->
+        <div class="bg-white rounded-lg shadow-md mb-8 p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">Input Message</h2>
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        placeholder="Enter message to encrypt"
+                        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">Key</h2>
+                    <div class="flex gap-2">
+                        <input 
+                            type="text" 
+                            id="keyInput" 
+                            placeholder="Enter key (32-448 bits)"
+                            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                        <button 
+                            onclick="generateRandomKey()"
+                            class="bg-purple-500 text-white px-4 py-2 rounded-md hover:bg-purple-600 transition-colors"
+                            title="Generate Random Key"
+                        >
+                            <i class="fas fa-random"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-center gap-4">
+                <button 
+                    onclick="visualizeEncryption()"
+                    class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors"
+                >
+                    Encrypt
+                </button>
+                <button 
+                    onclick="visualizeDecryption()"
+                    class="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 transition-colors"
+                >
+                    Decrypt
+                </button>
+            </div>
+        </div>
+
+        <!-- Visualization Grid -->
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Step 1: Understanding the Key -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-2">1. Understanding the Key</h3>
+                <div class="bg-blue-50 p-4 rounded-md mb-4">
+                    <p class="font-medium">How does the key work?</p>
+                    <div class="mt-2 space-y-4">
+                        <div class="bg-white p-3 rounded">
+                            <p class="font-medium text-sm">Key to Numbers Conversion:</p>
+                            <ol class="list-decimal list-inside text-sm mt-2">
+                                <li>Your key "abc" becomes numbers:</li>
+                                <ul class="list-disc list-inside ml-4 text-xs font-mono">
+                                    <li>a = 97 (01100001)</li>
+                                    <li>b = 98 (01100010)</li>
+                                    <li>c = 99 (01100011)</li>
+                                </ul>
+                            </ol>
+                        </div>
+
+                        <div class="bg-white p-3 rounded">
+                            <p class="font-medium text-sm">P-Array (like a recipe book):</p>
+                            <ul class="list-disc list-inside text-sm mt-2">
+                                <li>18 fixed numbers that get mixed with your key</li>
+                                <li>Think of it as 18 different spices for encryption</li>
+                                <li>Each number is 32 bits long (like a measuring cup)</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-3 rounded">
+                            <p class="font-medium text-sm">S-Boxes (like mixing tables):</p>
+                            <ul class="list-disc list-inside text-sm mt-2">
+                                <li>4 big tables of numbers (256 numbers each)</li>
+                                <li>Used to scramble data in different ways</li>
+                                <li>Like having 4 different ways to mix ingredients</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="keyExpansion" class="space-y-4"></div>
+            </div>
+
+            <!-- Step 2: Message Processing -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-2">2. Message Processing</h3>
+                <div class="bg-blue-50 p-4 rounded-md mb-4">
+                    <p class="font-medium">How is the message prepared?</p>
+                    <div class="mt-2 space-y-4">
+                        <div class="bg-white p-3 rounded">
+                            <p class="font-medium text-sm">Example with "Hi":</p>
+                            <ol class="list-decimal list-inside text-sm mt-2">
+                                <li>Convert to binary:</li>
+                                <div class="text-xs font-mono bg-gray-50 p-2 mt-1">
+                                    H = 01001000<br>
+                                    i = 01101001
+                                </div>
+                                <li>Split into 64-bit blocks (if needed, add padding)</li>
+                                <li>Each block is split into Left and Right halves:</li>
+                                <div class="text-xs font-mono bg-gray-50 p-2 mt-1">
+                                    Left: 01001000 (H)<br>
+                                    Right: 01101001 (i)
+                                </div>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div id="dataProcessing" class="space-y-4"></div>
+            </div>
+
+            <!-- Step 3: Encryption Process -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-2">3. The Mixing Process</h3>
+                <div class="bg-blue-50 p-4 rounded-md mb-4">
+                    <p class="font-medium">How does the mixing work?</p>
+                    <div class="mt-2 space-y-4">
+                        <div class="bg-white p-3 rounded">
+                            <p class="font-medium text-sm">In each round (16 times):</p>
+                            <ol class="list-decimal list-inside text-sm mt-2">
+                                <li>Take the Left half</li>
+                                <li>Mix it with a P-Array number (like adding spice)</li>
+                                <li>Run it through S-Boxes (like different mixing methods)</li>
+                                <li>XOR with Right half (like folding ingredients)</li>
+                                <li>Swap Left and Right (like flipping a pancake)</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-white p-3 rounded">
+                            <p class="font-medium text-sm">XOR Example:</p>
+                            <div class="text-xs font-mono bg-gray-50 p-2 mt-1">
+                                1010 (Left) XOR 1100 (Right)<br>
+                                = 0110 (Result)<br>
+                                Think: Different = 1, Same = 0
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="feistelNetwork" class="space-y-4"></div>
+            </div>
+
+            <!-- Final Result -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-2">4. The Final Result</h3>
+                <p class="text-sm text-gray-500 mb-4">Your encrypted message</p>
+                <div class="bg-blue-50 p-4 rounded-md mb-4">
+                    <p class="font-medium">What makes this secure?</p>
+                    <ul class="list-disc list-inside space-y-2 mt-2 text-sm">
+                        <li>Each bit of output depends on all bits of input</li>
+                        <li>The process can be reversed only with the correct key</li>
+                        <li>The algorithm is well-tested and secure</li>
+                    </ul>
+                </div>
+                <div id="finalResult" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <!-- Update the Visual Representation section -->
+        <div class="mt-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Visual Representation</h3>
+                <!-- Add a fixed height container with scrolling -->
+                <div class="relative">
+                    <div class="overflow-y-auto overflow-x-hidden" style="height: 500px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <div style="min-height: 1200px;">
+                            <canvas id="visualizationCanvas" width="800" height="1200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="quiz-button" onclick="startQuiz()">Take Quiz</button>
+    
+    <div class="quiz-overlay" id="quizOverlay"></div>
+    <div class="quiz-modal" id="quizModal">
+        <span class="close-quiz" onclick="closeQuiz()">&times;</span>
+        <div id="quizContent"></div>
+    </div>
+
+    <script>
+        function visualizeEncryption() {
+            const message = document.getElementById('messageInput').value;
+            const key = document.getElementById('keyInput').value;
+
+            if (!validateInputs(message, key)) return;
+
+            clearVisualizations();
+            
+            // Step 1: Understanding the Key
+            showKeyExpansion(key);
+
+            // Step 2: Message Processing
+            setTimeout(() => showDataProcessing(message), 1500);
+
+            // Step 3: Encryption Process
+            setTimeout(() => showFeistelNetwork(true), 3000);
+
+            // Show Final Result
+            setTimeout(() => showFinalResult(message, true), 4500);
+        }
+
+        function visualizeDecryption() {
+            const message = document.getElementById('messageInput').value;
+            const key = document.getElementById('keyInput').value;
+
+            if (!validateInputs(message, key)) return;
+
+            clearVisualizations();
+            
+            // Step 1: Understanding the Key
+            showKeyExpansion(key);
+
+            // Step 2: Message Processing
+            setTimeout(() => showDataProcessing(message), 1500);
+
+            // Step 3: Encryption Process
+            setTimeout(() => showFeistelNetwork(false), 3000);
+
+            // Show Final Result
+            setTimeout(() => showFinalResult(message, false), 4500);
+        }
+
+        function validateInputs(message, key) {
+            if (!message || !key) {
+                alert('Please fill in all fields');
+                return false;
+            }
+            if (key.length < 4 || key.length > 56) {
+                alert('Key length must be between 4 and 56 characters (32-448 bits)');
+                return false;
+            }
+            return true;
+        }
+
+        function showKeyExpansion(key) {
+            const keyExpansion = document.getElementById('keyExpansion');
+            const binary = stringToBinary(key);
+            
+            keyExpansion.innerHTML = `
+                <div class="bg-gray-50 p-4 rounded-md animate-fade">
+                    <p class="font-medium mb-2">Key Processing:</p>
+                    <div class="space-y-2 text-sm">
+                        <div class="bg-white p-2 rounded">
+                            <p class="font-medium">Original Key:</p>
+                            <p class="font-mono">${key}</p>
+                        </div>
+                        <div class="bg-white p-2 rounded">
+                            <p class="font-medium">Binary Form:</p>
+                            <p class="font-mono text-xs break-all">${binary}</p>
+                        </div>
+                        <div class="bg-white p-2 rounded">
+                            <p class="font-medium">P-array Generation:</p>
+                            <div class="grid grid-cols-6 gap-1 mt-1">
+                                ${Array(18).fill(0).map((_, i) => 
+                                    `<div class="text-xs font-mono bg-blue-50 p-1 rounded">P${i}</div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                        <div class="bg-white p-2 rounded">
+                            <p class="font-medium">S-boxes (4 x 256):</p>
+                            <div class="grid grid-cols-4 gap-2 mt-1">
+                                ${Array(4).fill(0).map((_, i) => 
+                                    `<div class="text-xs text-center">S${i}<div class="bg-green-50 p-1 rounded mt-1">256 values</div></div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showDataProcessing(message) {
+            const dataProcessing = document.getElementById('dataProcessing');
+            const binary = stringToBinary(message);
+            
+            dataProcessing.innerHTML = `
+                <div class="bg-gray-50 p-4 rounded-md animate-fade">
+                    <p class="font-medium mb-2">Message Processing:</p>
+                    <div class="space-y-2 text-sm">
+                        <div class="bg-white p-2 rounded">
+                            <p class="font-medium">Original Message:</p>
+                            <p class="font-mono">${message}</p>
+                        </div>
+                        <div class="bg-white p-2 rounded">
+                            <p class="font-medium">Binary Form:</p>
+                            <p class="font-mono text-xs break-all">${binary}</p>
+                        </div>
+                        <div class="bg-white p-2 rounded">
+                            <p class="font-medium">64-bit Blocks:</p>
+                            <div class="space-y-1 mt-1">
+                                ${binary.match(/.{1,64}/g)?.map(block => 
+                                    `<div class="text-xs font-mono bg-blue-50 p-1 rounded">${block}</div>`
+                                ).join('') || ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showFeistelNetwork(isEncrypt) {
+            const feistelNetwork = document.getElementById('feistelNetwork');
+            const message = document.getElementById('messageInput').value;
+            
+            feistelNetwork.innerHTML = `
+                <div class="bg-gray-50 p-4 rounded-md animate-fade">
+                    <p class="font-medium mb-2">Feistel Network Operation:</p>
+                    <div class="space-y-3 text-sm">
+                        <div class="bg-white p-2 rounded">
+                            <p class="font-medium">Process Direction:</p>
+                            <p class="font-mono ${isEncrypt ? 'text-blue-600' : 'text-green-600'}">
+                                ${isEncrypt ? 'Encryption (Forward)' : 'Decryption (Reverse)'}
+                            </p>
+                        </div>
+                        <div class="bg-white p-2 rounded">
+                            <p class="font-medium">Round Progress:</p>
+                            <div class="h-2 bg-gray-200 rounded-full mt-2">
+                                <div class="h-2 bg-blue-600 rounded-full w-0 transition-all duration-1000"
+                                     id="roundProgressBar"></div>
+                            </div>
+                            <p class="text-xs text-center mt-1" id="roundCounter">Round 0/16</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Animate rounds
+            let round = 0;
+            const progressBar = document.getElementById('roundProgressBar');
+            const counter = document.getElementById('roundCounter');
+            
+            const interval = setInterval(() => {
+                if (round < 16) {
+                    round++;
+                    progressBar.style.width = `${(round/16) * 100}%`;
+                    counter.textContent = `Round ${round}/16`;
+                    
+                    // Update the canvas with current state
+                    const canvas = document.getElementById('visualizationCanvas');
+                    drawFeistelNetwork(canvas, round, message, isEncrypt);
+                } else {
+                    clearInterval(interval);
+                }
+            }, 200);
+        }
+
+        function showFinalResult(message, isEncrypt) {
+            const finalResult = document.getElementById('finalResult');
+            const result = isEncrypt ? blowfishEncrypt(message, 'key') : blowfishDecrypt(message, 'key');
+            
+            finalResult.innerHTML = `
+                <div class="animate-fade">
+                    <div class="bg-gray-50 p-4 rounded-md mb-4">
+                        <p class="font-medium mb-2">Final ${isEncrypt ? 'Encrypted' : 'Decrypted'} Result:</p>
+                        <div class="space-y-2">
+                            <div class="bg-white p-2 rounded">
+                                <p class="text-xs text-gray-500">Input:</p>
+                                <p class="font-mono text-sm">${message}</p>
+                            </div>
+                            <div class="bg-yellow-50 p-2 rounded">
+                                <p class="text-xs text-gray-500">Output:</p>
+                                <p class="font-mono text-sm break-all">${result}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function stringToBinary(str) {
+            return str.split('').map(char => 
+                char.charCodeAt(0).toString(2).padStart(8, '0')
+            ).join('');
+        }
+
+        function blowfishEncrypt(text, key) {
+            // This is a simplified version for visualization
+            let result = '';
+            const chars = text.split('');
+            for(let i = 0; i < chars.length; i++) {
+                result += chars[i].charCodeAt(0).toString(16).padStart(2, '0');
+            }
+            return result;
+        }
+
+        function blowfishDecrypt(text, key) {
+            // This is a simplified version for visualization
+            let result = '';
+            for(let i = 0; i < text.length; i += 2) {
+                result += String.fromCharCode(parseInt(text.substr(i, 2), 16));
+            }
+            return result;
+        }
+
+        function clearVisualizations() {
+            document.getElementById('keyExpansion').innerHTML = '';
+            document.getElementById('dataProcessing').innerHTML = '';
+            document.getElementById('feistelNetwork').innerHTML = '';
+            document.getElementById('finalResult').innerHTML = '';
+        }
+
+        function generateRandomKey() {
+            const length = Math.floor(Math.random() * (56 - 4 + 1)) + 4; // Random length between 4 and 56
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+            let key = '';
+            for (let i = 0; i < length; i++) {
+                key += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('keyInput').value = key;
+        }
+
+        function drawFeistelNetwork(canvas, currentRound, message, isEncrypt) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Adjust dimensions for better spacing
+            const startX = 100;
+            const endX = canvas.width - 100;
+            const startY = 40;
+            const boxWidth = 100;
+            const boxHeight = 30;
+            const spacing = 45;
+            const roundSpacing = 65; // Increased spacing between rounds
+
+            // Draw title (fixed at top)
+            ctx.fillStyle = '#1F2937';
+            ctx.font = 'bold 16px Inter';
+            ctx.fillText(`${isEncrypt ? 'Encryption' : 'Decryption'} Process - Round ${currentRound}/16`, canvas.width/2 - 150, 25);
+
+            // Draw input data
+            ctx.fillStyle = '#3B82F6';
+            const inputWidth = boxWidth * 2;
+            drawRoundedRect(ctx, canvas.width/2 - inputWidth/2, startY, inputWidth, boxHeight, 8);
+            ctx.fillStyle = '#fff';
+            ctx.font = '14px Inter';
+            ctx.fillText(`Input: "${message.slice(0, 12)}${message.length > 12 ? '...' : ''}"`, canvas.width/2 - 60, startY + 20);
+
+            // Draw split arrows
+            const splitY = startY + boxHeight + 20;
+            drawArrow(ctx, canvas.width/2, startY + boxHeight, startX + boxWidth/2, splitY);
+            drawArrow(ctx, canvas.width/2, startY + boxHeight, endX - boxWidth/2, splitY);
+
+            // Draw initial left and right blocks
+            ctx.fillStyle = '#10B981';
+            drawRoundedRect(ctx, startX, splitY, boxWidth, boxHeight, 8);
+            drawRoundedRect(ctx, endX - boxWidth, splitY, boxWidth, boxHeight, 8);
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = '13px Inter';
+            ctx.fillText('Left Half', startX + 20, splitY + 20);
+            ctx.fillText('Right Half', endX - boxWidth + 15, splitY + 20);
+
+            // Draw all 16 rounds (not just current round)
+            let currentY = splitY + boxHeight + roundSpacing;
+            
+            for(let i = 0; i < 16; i++) {
+                const isActiveRound = i < currentRound;
+                const alpha = isActiveRound ? '1' : '0.3';
+
+                // Draw round number
+                ctx.fillStyle = `rgba(107, 114, 128, ${alpha})`;
+                ctx.font = '12px Inter';
+                ctx.fillText(`Round ${i + 1}`, 40, currentY + boxHeight/2);
+
+                // Draw F-function box
+                const fBoxX = canvas.width/2 - boxWidth/2;
+                ctx.fillStyle = `rgba(139, 92, 246, ${alpha})`;
+                drawRoundedRect(ctx, fBoxX, currentY, boxWidth, boxHeight, 8);
+                ctx.fillStyle = isActiveRound ? '#fff' : `rgba(255, 255, 255, ${alpha})`;
+                ctx.font = '13px Inter';
+                ctx.fillText(`F-function`, fBoxX + 20, currentY + 20);
+
+                // Draw XOR operation
+                const xorX = isEncrypt ? startX + boxWidth + spacing : endX - boxWidth - spacing;
+                if(isActiveRound) {
+                    drawXOROperation(ctx, xorX, currentY + boxHeight/2);
+                } else {
+                    ctx.globalAlpha = 0.3;
+                    drawXOROperation(ctx, xorX, currentY + boxHeight/2);
+                    ctx.globalAlpha = 1;
+                }
+
+                // Draw data flow arrows
+                ctx.strokeStyle = `rgba(107, 114, 128, ${alpha})`;
+                if(isEncrypt) {
+                    drawArrow(ctx, startX + boxWidth, currentY, fBoxX, currentY + boxHeight/2);
+                    drawArrow(ctx, fBoxX + boxWidth, currentY + boxHeight/2, xorX - 15, currentY + boxHeight/2);
+                } else {
+                    drawArrow(ctx, endX - boxWidth, currentY, fBoxX, currentY + boxHeight/2);
+                    drawArrow(ctx, fBoxX + boxWidth, currentY + boxHeight/2, xorX + 15, currentY + boxHeight/2);
+                }
+
+                // Draw swap lines
+                ctx.strokeStyle = `rgba(107, 114, 128, ${alpha})`;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(startX + boxWidth/2, currentY + boxHeight);
+                ctx.lineTo(endX - boxWidth/2, currentY + boxHeight + roundSpacing/2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Draw vertical lines connecting rounds
+                if (i < 15) {
+                    ctx.beginPath();
+                    ctx.moveTo(startX + boxWidth/2, currentY + boxHeight);
+                    ctx.lineTo(startX + boxWidth/2, currentY + roundSpacing);
+                    ctx.moveTo(endX - boxWidth/2, currentY + boxHeight);
+                    ctx.lineTo(endX - boxWidth/2, currentY + roundSpacing);
+                    ctx.stroke();
+                }
+
+                currentY += roundSpacing;
+            }
+
+            // Draw final output block
+            if(currentRound === 16) {
+                ctx.fillStyle = '#F59E0B';
+                drawRoundedRect(ctx, canvas.width/2 - inputWidth/2, currentY + spacing, inputWidth, boxHeight, 8);
+                ctx.fillStyle = '#fff';
+                ctx.font = '14px Inter';
+                ctx.fillText('Final Output', canvas.width/2 - 40, currentY + spacing + 20);
+            }
+
+            // Add direction indicators
+            ctx.fillStyle = '#6B7280';
+            ctx.font = '12px Inter';
+            if(isEncrypt) {
+                ctx.fillText('→ Data Flow →', canvas.width/2 - 40, 60);
+            } else {
+                ctx.fillText('← Data Flow ←', canvas.width/2 - 40, 60);
+            }
+        }
+
+        function drawXOROperation(ctx, x, y) {
+            const size = 24;
+            ctx.beginPath();
+            ctx.arc(x, y, size/2, 0, Math.PI * 2);
+            ctx.fillStyle = '#EF4444';
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Inter';
+            ctx.fillText('⊕', x - 6, y + 5);
+        }
+
+        function drawRoundedRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawArrow(ctx, fromX, fromY, toX, toY) {
+            const headLength = 10;
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.lineTo(toX - headLength * Math.cos(angle - Math.PI/6),
+                      toY - headLength * Math.sin(angle - Math.PI/6));
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headLength * Math.cos(angle + Math.PI/6),
+                      toY - headLength * Math.sin(angle + Math.PI/6));
+            ctx.strokeStyle = '#6B7280';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+    </script>
+</body>
+</html> 

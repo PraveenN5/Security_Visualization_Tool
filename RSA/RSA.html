@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA Algorithm Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .step {
+            margin-bottom: 20px;
+        }
+        .highlight {
+            color: #2a9d8f;
+            font-weight: bold;
+        }
+        .code {
+            background-color: #eef;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #248f80;
+        }
+        .output {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .input-field {
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .input-field label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-field input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        .box-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .formula {
+            font-family: monospace;
+            background: #eef;
+            padding: 8px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RSA Algorithm Visualization</h1>
+        <h2>Step-by-Step Explanation</h2>
+        <div class="step">
+            <p>Enter two prime numbers <span class="highlight">p</span> and <span class="highlight">q</span></p>
+        </div>
+        <div class="input-field">
+            <label for="p">Enter prime number p:</label>
+            <input type="number" id="p" placeholder="e.g., 61" required>
+        </div>
+        <div class="input-field">
+            <label for="q">Enter prime number q:</label>
+            <input type="number" id="q" placeholder="e.g., 53" required>
+        </div>
+        <div class="input-field">
+            <label for="x">Enter message (x):</label>
+            <input type="number" id="x" placeholder="e.g., 65" required>
+        </div>
+        <button id="run">Visualize RSA Algorithm</button>
+        <div id="output" class="output"></div>
+        <div id="steps" class="steps"></div>
+    </div>
+    <script>
+        function isPrime(num) {
+            if (num <= 1) return false;
+            for (let i = 2; i * i <= num; i++) {
+                if (num % i === 0) return false;
+            }
+            return true;
+        }
+
+        function gcd(a, b) {
+            while (b !== 0) {
+                [a, b] = [b, a % b];
+            }
+            return a;
+        }
+
+        function lcm(a, b) {
+            return (a * b) / gcd(a, b);
+        }
+
+        function modularInverse(a, m) {
+            let m0 = m, t, q;
+            let x0 = 0, x1 = 1;
+
+            if (m === 1) return 0;
+
+            while (a > 1) {
+                q = Math.floor(a / m);
+                t = m;
+                m = a % m; a = t;
+                t = x0;
+                x0 = x1 - q * x0;
+                x1 = t;
+            }
+
+            if (x1 < 0) x1 += m0;
+
+            return x1;
+        }
+
+        document.getElementById('run').addEventListener('click', function () {
+            const p = parseInt(document.getElementById('p').value);
+            const q = parseInt(document.getElementById('q').value);
+            const x = parseInt(document.getElementById('x').value);
+
+            const stepsContainer = document.getElementById('steps');
+            stepsContainer.innerHTML = ""; // Clear previous steps
+
+            if (!isPrime(p) || !isPrime(q)) {
+                document.getElementById('output').innerHTML = "Both p and q must be prime numbers.";
+                return;
+            }
+
+            const n = p * q; // n = p * q
+            const phi_n = lcm(p - 1, q - 1); // Calculate ϕ(n) using LCM
+
+            // Find a valid E such that gcd(E, ϕ(n)) = 1 and 1 < E < ϕ(n)
+            let E = 2;
+            while (E < phi_n && gcd(E, phi_n) !== 1) {
+                E++;
+            }
+
+            if (E >= phi_n) {
+                document.getElementById('output').innerHTML = "Could not find a valid E. Try different primes.";
+                return;
+            }
+
+            const D = modularInverse(E, phi_n);
+
+            if (D === 0) {
+                document.getElementById('output').innerHTML = "Could not calculate D. Try different primes.";
+                return;
+            }
+
+            // Encryption: m = x^E mod n
+            const m = BigInt(x) ** BigInt(E) % BigInt(n);
+
+            // Decryption: x = m^D mod n
+            const decryptedX = BigInt(m) ** BigInt(D) % BigInt(n);
+
+            // Display steps
+            stepsContainer.innerHTML += `<div class='box'><div class='box-title'>Step 1: Calculate n</div><p>n = p * q = ${p} * ${q} = ${n}</p></div>`;
+            stepsContainer.innerHTML += `<div class='box'><div class='box-title'>Step 2: Calculate ϕ(n)</div><p>ϕ(n) = lcm(p - 1, q - 1) = lcm(${p - 1}, ${q - 1}) = ${phi_n}</p></div>`;
+            stepsContainer.innerHTML += `<div class='box'><div class='box-title'>Step 3: Choose E</div><p>E = ${E}, where gcd(E, ϕ(n)) = 1 and 1 < E < ϕ(n)</p></div>`;
+            stepsContainer.innerHTML += `<div class='box'><div class='box-title'>Step 4: Calculate D</div><p>D = ${D}, which is the modular inverse of E mod ϕ(n)</p></div>`;
+            stepsContainer.innerHTML += `<div class='box'><div class='box-title'>Step 5: Encryption</div><p>Encrypted Message: <span class='formula'>m = x<sup>E</sup> mod n</span></p><p>m = ${x}<sup>${E}</sup> mod ${n} = ${m}</p></div>`;
+            stepsContainer.innerHTML += `<div class='box'><div class='box-title'>Step 6: Decryption</div><p>Decrypted Message: <span class='formula'>x = m<sup>D</sup> mod n</span></p><p>x = ${m}<sup>${D}</sup> mod ${n} = ${decryptedX}</p></div>`;
+
+        });
+    </script>
+</body>
+</html>

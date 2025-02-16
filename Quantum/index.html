@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Key Distribution (QKD) and BB84 Protocol</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background: #35424a;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        section {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #35424a;
+        }
+
+        .image {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .image img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .highlight {
+            background: #ffffe0;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        footer {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px 0;
+            color: #fff;
+            background: #35424a;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .quiz-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #01E9F8;
+            color: #1F252E;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(1, 233, 248, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/quiz.css">
+    <script src="../js/chatbot.js"></script>
+    <script src="../js/quiz.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Quantum Key Distribution (QKD) and BB84 Protocol</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Introduction</h2>
+        <p>
+            Quantum Key Distribution (QKD) represents a revolutionary advancement in the field of cryptography. By utilizing the principles of 
+            <span class="highlight">quantum mechanics</span>, QKD ensures the secure exchange of encryption keys between two parties. This method offers 
+            unparalleled security by leveraging fundamental quantum properties, such as superposition and entanglement, which are absent in classical 
+            communication systems.
+        </p>
+        <p>
+        </section>
+
+        <section>
+            <h2>Classical Cryptography</h2>
+        <p>
+            Cryptography is a technique used to securely store and transmit data in such a way that only the intended recipient can access and process it. 
+            Classical cryptography is broadly categorized into two branches: <span class="highlight">Secret Key Cryptography</span> and 
+            <span class="highlight">Public Key Cryptography</span>.
+        </p>
+        <h3>Secret Key Cryptography</h3>
+        <p>
+            In secret-key cryptography, the same shared key is used by both parties for encrypting and decrypting messages. Before secure communication can 
+            occur, the two parties must share the key through a secure channel. This reliance on key sharing introduces vulnerabilities, as the key may 
+            be intercepted during transmission, potentially compromising the entire cryptographic system.
+        </p>
+        <h3>Public Key Cryptography</h3>
+        <p>
+            Public-key cryptography relies on a pair of keys: a public key and a private key. Data encrypted using the public key can only be decrypted 
+            with the corresponding private key, and vice versa. The security of this system depends on the computational difficulty of problems like 
+            <span class="highlight">integer factorization</span> and the <span class="highlight">discrete logarithmic problem</span>. However, the emergence 
+            of quantum computing poses a significant threat to public-key cryptography, as algorithms like Shor's algorithm can solve these problems in 
+            polynomial time.
+        </p>
+    
+        <h2>Performance of Shor's Algorithm vs. Classical Algorithms</h2>
+        <p>
+            Classical algorithms, such as the number field sieve, are currently the best methods for solving integer factorization problems. These 
+            algorithms operate with a computational complexity of <span class="highlight">exp(const × d<sup>1/3</sup>)</span>, where <em>d</em> represents 
+            the number of digits in the integer. Despite being efficient for classical systems, their exponential growth in computational effort makes 
+            them infeasible for factoring very large integers.
+        </p>
+        <p>
+            In contrast, Shor's algorithm, a quantum algorithm, operates with a complexity of <span class="highlight">O(d<sup>3</sup>)</span>, making it 
+            exponentially faster than classical methods. This drastic improvement in performance demonstrates the potential of quantum computing to break 
+            traditional cryptographic systems, emphasizing the need for quantum-resistant cryptographic protocols.
+        </p>
+        <figure>
+            <img src="shor.png" alt="Performance of Shor's algorithm against the best classical factorizing algorithm">
+            <figcaption>
+                Comparison of computational complexity between classical algorithms and Shor's algorithm for integer factorization.
+            </figcaption>
+        </figure>
+    </section>
+        </section>
+
+        <section>
+            <h2>Principles of Quantum Mechanics in QKD</h2>
+            <p>The following principles underpin QKD:</p>
+            <ul>
+                <li><b>Heisenberg's Uncertainty Principle:</b> In quantum systems, you can't precisely measure both properties of a pair, like position and momentum, at the same time. Measuring one disturbs the other. Quantum cryptography uses this idea by encoding information in the polarization of photons, which are sent over fiber optics..</li>
+                <li><b>No Cloning Theorem:</b> It's impossible to make an exact copy of an unknown quantum state. This ensures that if someone tries to intercept a quantum message, their interference can be detected.</li>
+                <li><b>Quantum Entanglement:</b> Two particles can be "entangled," meaning their states are linked no matter how far apart they are. Measuring one particle instantly determines the state of the other. This property is used in quantum communication methods like teleportation and in protocols like Eckert's.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>The BB84 Protocol</h2>
+            <p>Proposed in 1984 by Bennett and Brassard, BB84 is a foundational quantum protocol. Here's how it works:Alice securely sends a secret key to Bob by encoding it in the polarization of photons. The no-cloning theorem ensures that if Eve tries to intercept and measure the photons, her interference will alter their states, making any eavesdropping detectable. </p>
+            <h4>
+                Photons as Qubits</h4>
+                <P>Photons have unique quantum properties and can travel through fiber optics, making them ideal for encoding secret keys in quantum cryptography. Their polarization is used to represent qubits. A light wave is an electromagnetic wave where the electric and magnetic fields oscillate in perpendicular planes, and the wave propagates in a direction orthogonal to these planes. When a light wave is polarized, it oscillates in a single plane, which can be controlled using tools like polarizers, half-wave plates, and quarter-wave plates.
+
+                    Photon polarization can be of two main types: linear and elliptical. For quantum cryptography, we only focus on linear polarization, which is further divided into rectilinear and diagonal types. Rectilinear polarization includes horizontal (|H⟩) and vertical (|V⟩) states, while diagonal polarization includes diagonal (|D⟩) and anti-diagonal (|A⟩) states. These states naturally form a two-level system, suitable for qubits. Horizontal (|H⟩) and vertical (|V⟩) states are mapped to |0⟩ and |1⟩ along the Z-axis, while diagonal (|D⟩) and anti-diagonal (|A⟩) states are mapped to |+⟩ and |−⟩ along the X-axis. These representations allow photons to encode and transmit information securely in protocols like BB84.</P>
+                    <center><figure>
+                        <img src="PHOTON.png" alt="Performance of Shor's algorithm against the best classical factorizing algorithm">
+                        <figcaption>
+                            
+                        </figcaption>
+                    </figure></center>
+                    <ol>
+                <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BB84 Protocol Visualization</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f6fa;
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .protocol-container {
+            margin-top: 20px;
+        }
+
+        .grid-container {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .grid-row {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .grid-label {
+            background: #2ecc71;
+            color: white;
+            padding: 10px;
+            width: 150px;
+            text-align: right;
+            font-weight: bold;
+            border-right: 2px solid #fff;
+        }
+
+        .grid-cells {
+            display: flex;
+            flex: 1;
+            gap: 1px;
+            background: #f0f0f0;
+            padding: 5px;
+        }
+
+        .grid-cell {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            position: relative;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .grid-cell.basis {
+            background: #f8f9fa;
+        }
+
+        .grid-cell.basis::before,
+        .grid-cell.basis::after {
+            content: '';
+            position: absolute;
+            background: #333;
+        }
+
+        .grid-cell.basis-plus::before {
+            width: 2px;
+            height: 20px;
+            transform: rotate(0deg);
+        }
+
+        .grid-cell.basis-plus::after {
+            width: 20px;
+            height: 2px;
+            transform: rotate(0deg);
+        }
+
+        .grid-cell.basis-times::before {
+            width: 20px;
+            height: 2px;
+            transform: rotate(45deg);
+        }
+
+        .grid-cell.basis-times::after {
+            width: 20px;
+            height: 2px;
+            transform: rotate(-45deg);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--accent-color);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .grid-cell.matched {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .grid-cell.unmatched {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .grid-cell.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .grid-label.eve {
+            background: #e74c3c;
+        }
+
+        .protocol-divider {
+            margin: 60px 0;
+            border-top: 2px solid #ddd;
+            text-align: center;
+            position: relative;
+        }
+
+        .protocol-divider::after {
+            content: "Eve's Interference Scenario";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f5f6fa;
+            padding: 0 20px;
+            color: var(--error-color);
+            font-weight: bold;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Add styles for explanation steps */
+        .explanation {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+        }
+
+        .steps {
+            margin: 20px 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .step {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid var(--accent-color);
+            border-radius: 0 5px 5px 0;
+        }
+
+        .step.eve-step {
+            border-left-color: var(--error-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Normal Protocol Section -->
+        <h1>BB84 Quantum Key Distribution Steps</h1>
+        
+        <div class="controls">
+            <button onclick="startNormalProtocol()">Start Protocol</button>
+            <button onclick="resetNormal()">Reset</button>
+        </div>
+
+        <div class="explanation">
+            <h2>BB84 Protocol Steps:</h2>
+            <div class="steps">
+                <div class="step">
+                    <strong>Step 1: Alice's Preparation</strong>
+                    <p>Alice generates a random string of bits (0s and 1s) and randomly chooses a basis (rectilinear + or diagonal ×) for each bit.</p>
+                </div>
+                <div class="step">
+                    <strong>Step 2: Quantum Transmission</strong>
+                    <p>Alice sends photons to Bob, encoding each bit using her chosen basis. The rectilinear basis (+) uses horizontal/vertical polarization, while the diagonal basis (×) uses 45°/135° polarization.</p>
+                </div>
+                <div class="step">
+                    <strong>Step 3: Bob's Measurement</strong>
+                    <p>Bob randomly chooses a measurement basis (+ or ×) for each received photon, not knowing Alice's choices. When his basis matches Alice's, he gets the correct bit. When bases differ, he gets a random result.</p>
+                </div>
+                <div class="step">
+                    <strong>Step 4: Basis Reconciliation</strong>
+                    <p>Alice and Bob publicly share their basis choices. They keep only the bits where they used the same basis and discard the rest.</p>
+                </div>
+                <div class="step">
+                    <strong>Step 5: Final Key</strong>
+                    <p>The remaining bits form the final key. If no eavesdropper was present, Alice and Bob now share an identical secret key.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="protocol-container">
+            <div class="grid-container">
+                <div class="grid-row">
+                    <div class="grid-label">Alice's Bits</div>
+                    <div class="grid-cells" id="normal-alice-bits-row"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-label">Alice's Basis</div>
+                    <div class="grid-cells" id="normal-alice-basis-row"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-label">Bob's Basis</div>
+                    <div class="grid-cells" id="normal-bob-basis-row"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-label">Bob's Bits</div>
+                    <div class="grid-cells" id="normal-bob-bits-row"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-label">Final Key</div>
+                    <div class="grid-cells" id="normal-final-key-row"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status">
+            <h3>Protocol Status</h3>
+            <div id="normal-protocol-info">Ready to start...</div>
+        </div>
+
+        <!-- Divider -->
+        <div class="protocol-divider"></div>
+
+        <!-- Eve's Interference Section -->
+        <div class="controls">
+            <button onclick="startEveProtocol()">Simulate Interference</button>
+            <button onclick="resetEve()">Reset</button>
+        </div>
+
+        <div class="explanation">
+            <h2>Eve's Interference in BB84 Protocol</h2>
+            <div class="steps">
+                <div class="step eve-step">
+                    <strong>Step 1: Eve's Interception</strong>
+                    <p>Eve intercepts the photons that Alice sends to Bob. Like Bob, she doesn't know which basis Alice used for each bit.</p>
+                </div>
+                <div class="step eve-step">
+                    <strong>Step 2: Eve's Measurement</strong>
+                    <p>Eve must measure each photon using either the rectilinear (+) or diagonal (×) basis. She randomly chooses a basis for each measurement, just like Bob would.</p>
+                </div>
+                <div class="step eve-step">
+                    <strong>Step 3: Quantum Disturbance</strong>
+                    <p>When Eve measures with the wrong basis (different from Alice's), she disturbs the quantum state. This means the original information is lost and replaced with a random result.</p>
+                </div>
+                <div class="step eve-step">
+                    <strong>Step 4: Retransmission</strong>
+                    <p>Eve must send new photons to Bob based on her measurements. When she measured with the wrong basis, she sends incorrect information to Bob.</p>
+                </div>
+                <div class="step eve-step">
+                    <strong>Step 5: Error Detection</strong>
+                    <p>Even when Alice and Bob's bases match, they will find errors in their shared key if Eve measured with a different basis. These errors reveal Eve's presence.</p>
+                </div>
+                <div class="step eve-step">
+                    <strong>Result</strong>
+                    <p>In this example, despite having matching bases in several positions, Alice and Bob's bits don't match due to Eve's interference. The red cells in the Shifted Key row indicate where Eve's wrong measurements caused errors.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="protocol-container">
+            <div class="grid-container">
+                <div class="grid-row">
+                    <div class="grid-label">Alice's bit-string</div>
+                    <div class="grid-cells" id="eve-alice-bits-row"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-label">Alice's encoding basis</div>
+                    <div class="grid-cells" id="eve-alice-basis-row"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-label eve">Eve's measurement basis</div>
+                    <div class="grid-cells" id="eve-basis-row"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-label">Bob's measurement basis</div>
+                    <div class="grid-cells" id="eve-bob-basis-row"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="grid-label">Shifted Key</div>
+                    <div class="grid-cells" id="eve-shifted-key-row"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let protocolRunning = false;
+
+        function startNormalProtocol() {
+            if (protocolRunning) return;
+            protocolRunning = true;
+            
+            // Copy normal protocol logic from index.html
+            const aliceBits = Array.from({length: 24}, () => Math.random() > 0.5 ? '1' : '0');
+            const aliceBases = Array.from({length: 24}, () => Math.random() > 0.5 ? '+' : '×');
+            const bobBases = Array.from({length: 24}, () => Math.random() > 0.5 ? '+' : '×');
+            
+            // Calculate Bob's measured bits
+            const bobBits = aliceBits.map((bit, i) => {
+                if (aliceBases[i] === bobBases[i]) {
+                    return bit;
+                } else {
+                    return Math.random() > 0.5 ? '1' : '0';
+                }
+            });
+
+            // Calculate final key
+            const finalKey = aliceBits.map((bit, i) => 
+                aliceBases[i] === bobBases[i] ? bit : ''
+            );
+
+            updateGrid('normal-alice-bits-row', aliceBits);
+            updateBasisGrid('normal-alice-basis-row', aliceBases);
+            updateBasisGrid('normal-bob-basis-row', bobBases);
+            updateGrid('normal-bob-bits-row', bobBits, (i) => {
+                return aliceBases[i] === bobBases[i] ? 'matched' : 'unmatched';
+            });
+            updateGrid('normal-final-key-row', finalKey);
+
+            const matchCount = finalKey.filter(bit => bit !== '').length;
+            const statusInfo = document.getElementById('normal-protocol-info');
+            statusInfo.innerHTML = `
+                Protocol complete!<br>
+                Final key length: ${matchCount}<br>
+            `;
+
+            protocolRunning = false;
+        }
+
+        function startEveProtocol() {
+            if (protocolRunning) return;
+            protocolRunning = true;
+            
+            // Copy Eve interference logic from eve.html
+            const aliceBits = ['1', '0', '0', '1', '1', '0', '1', '0', '0', '1'];
+            const aliceBases = ['+', '×', '×', '+', '×', '+', '+', '+', '+', '+'];
+            const eveBases = ['×', '×', '+', '×', '+', '+', '×', '+', '×', '×'];
+            const bobBases = ['+', '+', '×', '+', '+', '×', '+', '+', '+', '×'];
+
+            // Calculate shifted key
+            const shiftedKey = aliceBits.map((bit, i) => {
+                if (aliceBases[i] === bobBases[i]) {
+                    if (eveBases[i] !== aliceBases[i]) {
+                        return 'error';
+                    }
+                    return bit;
+                }
+                return '';
+            });
+
+            updateGrid('eve-alice-bits-row', aliceBits);
+            updateBasisGrid('eve-alice-basis-row', aliceBases);
+            updateBasisGrid('eve-basis-row', eveBases);
+            updateBasisGrid('eve-bob-basis-row', bobBases);
+            updateGrid('eve-shifted-key-row', shiftedKey, (i) => {
+                if (shiftedKey[i] === '') return '';
+                return shiftedKey[i] === 'error' ? 'error' : 'matched';
+            });
+
+            protocolRunning = false;
+        }
+
+        function resetNormal() {
+            const rows = [
+                'normal-alice-bits-row', 'normal-alice-basis-row',
+                'normal-bob-basis-row', 'normal-bob-bits-row',
+                'normal-final-key-row'
+            ];
+            rows.forEach(rowId => {
+                document.getElementById(rowId).innerHTML = '';
+            });
+            document.getElementById('normal-protocol-info').textContent = 'Ready to start...';
+        }
+
+        function resetEve() {
+            const rows = [
+                'eve-alice-bits-row', 'eve-alice-basis-row',
+                'eve-basis-row', 'eve-bob-basis-row',
+                'eve-shifted-key-row'
+            ];
+            rows.forEach(rowId => {
+                document.getElementById(rowId).innerHTML = '';
+            });
+        }
+
+        // Copy helper functions from both files
+        function updateBasisGrid(rowId, values) {
+            const row = document.getElementById(rowId);
+            row.innerHTML = '';
+            values.forEach((value) => {
+                const cell = document.createElement('div');
+                cell.className = `grid-cell basis basis-${value === '+' ? 'plus' : 'times'}`;
+                cell.setAttribute('aria-label', value === '+' ? 'plus basis' : 'times basis');
+                row.appendChild(cell);
+            });
+        }
+
+        function updateGrid(rowId, values, styleCallback) {
+            const row = document.getElementById(rowId);
+            row.innerHTML = '';
+            values.forEach((value, i) => {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                if (styleCallback) {
+                    cell.className += ' ' + styleCallback(i);
+                }
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
+        }
+    </script>
+
+    <button class="quiz-button" onclick="startQuiz('Quantum')">Take Quiz</button>
+
+    <div class="quiz-overlay" id="quizOverlay"></div>
+    <div class="quiz-modal" id="quizModal">
+        <span class="close-quiz" onclick="closeQuiz()">&times;</span>
+        <div id="quizContent"></div>
+    </div>
+</body>
+</html>
