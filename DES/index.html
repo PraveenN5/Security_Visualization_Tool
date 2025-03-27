@@ -407,7 +407,7 @@ function handleComplete() {
     <style>
         .quiz-button {
             position: fixed;
-            top: 20px;
+            top: 80px;
             right: 20px;
             background-color: #01E9F8;
             color: #1F252E;
@@ -417,14 +417,44 @@ function handleComplete() {
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(1, 233, 248, 0.3);
             transition: all 0.3s ease;
-            z-index: 1000;
+            z-index: 999;
         }
     </style>
     <link rel="stylesheet" href="../css/quiz.css">
     <script src="../js/chatbot.js"></script>
     <script src="../js/quiz.js"></script>
+    <script src="../js/leaderboard.js"></script>
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <div class="nav-bar" style="position: fixed; top: 0; left: 0; right: 0; background-color: rgba(31, 37, 46, 0.95); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid rgba(1, 233, 248, 0.1);">
+        <div class="nav-links" style="display: flex; align-items: center;">
+            <a href="../index.html" style="color: #fff; text-decoration: none; margin-right: 1.5rem; transition: color 0.3s ease;">Home</a>
+            <a href="../key-strength.html" style="color: #fff; text-decoration: none; margin-right: 1.5rem; transition: color 0.3s ease;">Key Strength Analyzer</a>
+            <a href="../algorithm-comparison.html" style="color: #fff; text-decoration: none; margin-right: 1.5rem; transition: color 0.3s ease;">Algorithm Comparison</a>
+        </div>
+        <div id="userInfo">
+            <!-- This will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <div style="position: fixed; top: 80px; right: 20px; z-index: 999; display: flex; gap: 10px;">
+        <button class="quiz-button" onclick="startQuiz('DES')" style="position: static;">Take Quiz</button>
+    </div>
+
+    <!-- Leaderboard Button Container (Hardcoded) -->
+    <div style="position: fixed; top: 80px; left: 20px; z-index: 999; display: flex; gap: 10px;">
+        <button 
+          class="leaderboard-button" 
+          onclick="showLeaderboard('DES')" 
+          style="background: linear-gradient(135deg, #3a7bd5, #00d2ff); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 20px rgba(58, 123, 213, 0.4); transition: all 0.3s ease;">
+          🏆 Leaderboard
+        </button>
+    </div>
+
+    <h1 class="text-center mt-4 mb-4" style="padding-top: 80px; color: #fff;">DES Algorithm Visualization</h1>
+    
+    <div class="container">
     <header id="mainHeader">
         <h1>DES Algorithm</h1>
         <form id="jsMainForm" action="#">
@@ -996,12 +1026,96 @@ function handleComplete() {
         document.querySelector(`.s-box-tab:nth-child(${boxNum})`).classList.add('active');
     }
     </script>
-    <button class="quiz-button" onclick="startQuiz('DES')">Take Quiz</button>
-    
     <div class="quiz-overlay" id="quizOverlay"></div>
     <div class="quiz-modal" id="quizModal">
         <span class="close-quiz" onclick="closeQuiz()">&times;</span>
         <div id="quizContent"></div>
     </div>
+
+    <script>
+        // Function to get cookie value by name
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        // Check login status when page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            let sessionId = getCookie('session_id');
+            const userInfo = document.getElementById('userInfo');
+            
+            if (!sessionId) {
+                userInfo.innerHTML = `
+                    <a href="../login.html">
+                        <button class="sign-in-btn" style="background-color: #01E9F8; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;" title="Sign in to your account">Sign In</button>
+                    </a>
+                `;
+                return;
+            }
+            
+            try {
+                const response = await fetch('https://security-viz-api.onrender.com/check-session', {
+                    method: 'GET',
+                    headers: {
+                        'X-Session-ID': sessionId,
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.authenticated) {
+                    userInfo.innerHTML = `
+                        <span class="welcome-text" style="color: #01E9F8; font-size: 1.1rem; margin-right: 1rem;">Welcome, ${data.username}</span>
+                        <button class="sign-in-btn" style="background-color: #01E9F8; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;" onclick="logout()" title="Sign out">Logout</button>
+                    `;
+                } else {
+                    // If session is invalid, remove the cookie
+                    document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                    userInfo.innerHTML = `
+                        <a href="../login.html">
+                            <button class="sign-in-btn" style="background-color: #01E9F8; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;" title="Sign in to your account">Sign In</button>
+                        </a>
+                    `;
+                }
+            } catch (error) {
+                userInfo.innerHTML = `
+                    <a href="../login.html">
+                        <button class="sign-in-btn" style="background-color: #01E9F8; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;" title="Sign in to your account">Sign In</button>
+                    </a>
+                `;
+            }
+        });
+
+        async function logout() {
+            const sessionId = getCookie('session_id');
+            if (!sessionId) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('https://security-viz-api.onrender.com/logout', {
+                    method: 'POST',
+                    headers: {
+                        'X-Session-ID': sessionId,
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+
+                // Remove the session cookie regardless of server response
+                document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                window.location.reload();
+            } catch (error) {
+                console.error('Logout failed:', error);
+                // Still remove cookie and reload on error
+                document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                window.location.reload();
+            }
+        }
+    </script>
 </body>
 </html>

@@ -2,8 +2,8 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Security Visualization Tool</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -13,33 +13,124 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap');
     
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
     body {
       background-color: #000;
       font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      overflow-x: hidden;
     }
 
+    /* Navigation Bar Styles */
+    .nav-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: rgba(31, 37, 46, 0.95);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(1, 233, 248, 0.1);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      margin-right: 1.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #01E9F8;
+    }
+
+    .welcome-text {
+      color: #01E9F8;
+      font-size: 1.1rem;
+      margin-right: 1rem;
+    }
+
+    .sign-in-btn {
+      background-color: #01E9F8;
+      color: #000;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .sign-in-btn:hover {
+      background-color: #00b3d8;
+      transform: translateY(-2px);
+    }
+
+    /* Adjust main content to account for fixed nav */
     section {
-      margin: 6rem auto;
+      margin: 5rem auto 3rem;
+      width: 100%;
+      max-width: 100%;
+      padding: 0 10px;
+    }
+
+    @media (min-width: 768px) {
+      section {
+        margin: 8rem auto 6rem;
+      }
     }
 
     .container {
       background-color: #1F252E;
+      width: 100%;
+      max-width: 100%;
+      padding: 15px;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        padding: 20px;
+      }
     }
 
     .wrapper {
       position: relative;
       width: 100%;
-      padding: 20px;
+      padding: 10px;
       display: flex;
-      align-content: center;
+      align-items: center;
       justify-content: center;
-      gap: 24px;
+      gap: 16px;
       flex-wrap: wrap;
+    }
+
+    @media (min-width: 768px) {
+      .wrapper {
+        padding: 20px;
+        gap: 24px;
+      }
     }
 
     .card {
       position: relative;
-      width: 300px;
+      width: 100%;
+      max-width: 300px;
       height: 400px;
       background: #000;
       border-radius: 18px;
@@ -47,10 +138,27 @@
       box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
       cursor: pointer;
       transition: transform 0.3s ease;
+      flex: 1 1 300px;
+      margin: 10px;
+      min-width: 280px;
+    }
+
+    @media (max-width: 767px) {
+      .card {
+        height: 350px;
+        margin: 8px;
+      }
     }
 
     .card:hover {
       transform: translateY(-10px);
+    }
+
+    /* For touch devices */
+    @media (hover: none) {
+      .card:active {
+        transform: translateY(-5px);
+      }
     }
 
     .poster {
@@ -84,6 +192,13 @@
       transform: scale(1.2);
     }
 
+    /* For touch devices */
+    @media (hover: none) {
+      .card:active .icon-container i {
+        transform: scale(1.1);
+      }
+    }
+
     .poster::before {
       content: '';
       position: absolute;
@@ -98,6 +213,13 @@
 
     .card:hover .poster::before {
       bottom: 0;
+    }
+
+    /* For touch devices */
+    @media (hover: none) {
+      .card:active .poster::before {
+        bottom: 0;
+      }
     }
 
     .poster img {
@@ -117,6 +239,14 @@
       opacity: 1;
     }
 
+    /* For touch devices */
+    @media (hover: none) {
+      .card:active .poster img {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+    }
+
     .details {
       position: absolute;
       bottom: -100%;
@@ -126,6 +256,7 @@
       padding: 1.5em 1.5em 1.8em;
       background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(16px) saturate(120%);
+      -webkit-backdrop-filter: blur(16px) saturate(120%);
       transition: .3s;
       color: #fff;
       z-index: 2;
@@ -133,6 +264,23 @@
 
     .card:hover .details {
       bottom: 0;
+    }
+
+    /* For touch devices */
+    @media (hover: none) {
+      .card:active .details {
+        bottom: 0;
+      }
+      
+      /* Alternative for mobile: always show some details */
+      .details {
+        bottom: -70%;
+        padding: 1em 1.2em;
+      }
+      
+      .details h1 {
+        margin-bottom: 5px !important;
+      }
     }
 
     .details h1 {
@@ -150,6 +298,14 @@
       font-size: 1em;
     }
 
+    @media (max-width: 767px) {
+      .details .desc {
+        font-size: 0.9em;
+        line-height: 1.3;
+        margin-bottom: 0.5em;
+      }
+    }
+
     .details .tags {
       display: flex;
       gap: .375em;
@@ -165,6 +321,13 @@
       border-radius: 50px;
     }
 
+    @media (max-width: 767px) {
+      .details .tags span {
+        padding: .25rem .5rem;
+        font-size: 0.8em;
+      }
+    }
+
     p {
       color: #c0c0c5;
       line-height: 1.7rem;
@@ -174,6 +337,9 @@
       padding: 0.6rem 1.5rem;
       border: 1px solid #01E9F8;
       color: #01E9F8;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .apps-store i {
@@ -192,6 +358,15 @@
       transition: all .3s ease-in-out;
     }
 
+    /* For touch devices */
+    @media (hover: none) {
+      .btn:active {
+        border: 1px solid #01E9F8;
+        color: #01E9F8;
+        box-shadow: 0rem 0rem 0.5rem 0rem #01E9F8;
+      }
+    }
+
     .img-bg::before {
       content: " ";
       height: 28vw;
@@ -202,7 +377,15 @@
     }
 
     h2 {
-      white-space: nowrap;
+      white-space: normal;
+      word-wrap: break-word;
+      text-align: center;
+    }
+
+    @media (min-width: 768px) {
+      h2 {
+        white-space: nowrap;
+      }
     }
 
     h2 span {
@@ -217,25 +400,113 @@
       color: #fff;
       border: none;
       border-radius: 50%;
-      padding: 10px 15px;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       cursor: pointer;
       transition: background-color 0.3s;
+      z-index: 100;
     }
 
     .share-button:hover {
       background-color: #00b3d8;
     }
+
+    /* Chat container styles */
+    .chat-container {
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 300px;
+      height: 400px;
+      background-color: #1F252E;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 99;
+    }
+
+    .chat-header {
+      background-color: #01E9F8;
+      color: #000;
+      padding: 10px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background-color: #2A3340;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #444;
+      padding: 10px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 20px;
+      margin-right: 5px;
+      background-color: #3A4555;
+      color: white;
+    }
+
+    .chat-input button {
+      background-color: #01E9F8;
+      color: #000;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      cursor: pointer;
+    }
+
+    /* Media queries for better responsiveness */
+    @media (max-width: 576px) {
+      .chat-container {
+        width: calc(100% - 40px);
+        height: 50vh;
+        bottom: 70px;
+      }
+      
+      .share-button {
+        width: 45px;
+        height: 45px;
+      }
+    }
   </style>
 </head>
 
 <body>
+  <!-- Navigation Bar -->
+  <div class="nav-bar">
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="key-strength.html">Key Strength Analyzer</a>
+      <a href="algorithm-comparison.html">Algorithm Comparison</a>
+    </div>
+    <div id="userInfo">
+      <!-- This will be populated by JavaScript -->
+      <div class="welcome-text" id="welcome-text" style="display: none;">Welcome, <span id="username"></span></div>
+      <button class="sign-in-btn" id="sign-in-btn" onclick="window.location.href='login.html'" title="Sign In">Sign In</button>
+    </div>
+  </div>
 
   <section>
     <div class="container rounded-4">
-      <div class="row justify-content-between align-items-center p-3">
+      <div class="row justify-content-between align-items-center p-2 p-md-3">
         <div class="col-12">
-          <h2 class="display-6 fw-bold text-white mb-5 text-center">
+          <h2 class="display-6 fw-bold text-white mb-3 mb-md-5">
             <span><i class="fa-solid fa-user-secret"></i></span>
             Security <span>Algorithm</span> Visualization <span>Tool</span>
           </h2>
@@ -355,7 +626,7 @@
   </section>
 
   <!-- Comparison Button centered -->
-  <section class="text-center mt-5">
+  <section class="text-center mt-3 mt-md-5">
     <button class="btn rounded-5 apps-store" onclick="toggleChat()">
       <span class="d-flex align-items-center justify-content-center">
         <span><i class="fa-solid fa-robot"></i></span>
@@ -378,13 +649,99 @@
   </div>
 
   <!-- Share Button -->
-  <button class="share-button" onclick="sharePage()">
+  <button class="share-button" onclick="sharePage()" title="Share this page">
     <i class="fa-solid fa-share-alt"></i>
   </button>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
   <script>
+    // Function to get cookie value by name
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+
+    // Function to check login status
+    function checkLoginStatus() {
+      const sessionId = getCookie('session_id');
+      const userInfo = document.getElementById('userInfo');
+      
+      if (!sessionId) {
+        userInfo.innerHTML = `
+          <a href="login.html">
+            <button class="sign-in-btn" style="background-color: #01E9F8; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;" title="Sign in to your account">Sign In</button>
+          </a>
+        `;
+        return;
+      }
+      
+      fetch('https://security-viz-api.onrender.com/check-session', {
+        method: 'GET',
+        headers: {
+          'X-Session-ID': sessionId,
+          'Accept': 'application/json'
+        },
+        credentials: 'include'
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.authenticated) {
+          userInfo.innerHTML = `
+            <span class="welcome-text" style="color: #01E9F8; font-size: 1.1rem; margin-right: 1rem;">Welcome, ${data.username}</span>
+            <button class="sign-in-btn" style="background-color: #01E9F8; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;" onclick="logout()" title="Sign out">Logout</button>
+          `;
+        } else {
+          // If session is invalid, remove the cookie
+          document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+          userInfo.innerHTML = `
+            <a href="login.html">
+              <button class="sign-in-btn" style="background-color: #01E9F8; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;" title="Sign in to your account">Sign In</button>
+            </a>
+          `;
+        }
+      })
+      .catch(error => {
+        console.error('Session check error:', error);
+        document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+        userInfo.innerHTML = `
+          <a href="login.html">
+            <button class="sign-in-btn" style="background-color: #01E9F8; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;" title="Sign in to your account">Sign In</button>
+          </a>
+        `;
+      });
+    }
+
+    async function logout() {
+      const sessionId = getCookie('session_id');
+      if (!sessionId) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch('https://security-viz-api.onrender.com/logout', {
+          method: 'POST',
+          headers: {
+            'X-Session-ID': sessionId,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+
+        // Remove the session cookie regardless of server response
+        document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+        window.location.reload();
+      } catch (error) {
+        console.error('Logout failed:', error);
+        // Still remove cookie and reload on error
+        document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+        window.location.reload();
+      }
+    }
+
     function sharePage() {
       // Use the Web Share API if available
       if (navigator.share) {
@@ -407,11 +764,62 @@
         ? 'flex' 
         : 'none';
     }
+
+    // Add touch support for cards on mobile devices
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.card');
+      
+      cards.forEach(card => {
+        card.addEventListener('touchstart', function() {
+          this.classList.add('touch-active');
+        }, {passive: true});
+        
+        card.addEventListener('touchend', function() {
+          setTimeout(() => {
+            this.classList.remove('touch-active');
+          }, 300);
+        }, {passive: true});
+      });
+    });
+
+    // Most importantly, make sure this is called when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      checkLoginStatus();
+    });
   </script>
 
-  <!-- Add these before the closing body tag -->
   <link rel="stylesheet" href="css/chatbot.css">
   <script src="js/chatbot.js"></script>
+
+  <!-- Add these styles for chat messages -->
+  <style>
+    .message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 15px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+    
+    .user-message {
+      background-color: #01E9F8;
+      color: #000;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+    
+    .bot-message {
+      background-color: #3A4555;
+      color: #fff;
+      align-self: flex-start;
+    }
+    
+    .chat-messages {
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
 </body>
 
 </html>
+

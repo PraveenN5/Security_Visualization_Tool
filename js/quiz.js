@@ -1,5 +1,6 @@
 // Store previous questions for each algorithm
 const previousQuestions = {};
+const API_URL = 'https://security-viz-api.onrender.com';
 
 async function startQuiz(algorithmName) {
     document.querySelector('.quiz-modal').dataset.algorithm = algorithmName;
@@ -28,7 +29,44 @@ async function startQuiz(algorithmName) {
                 - Security considerations
                 - Block and key sizes`;
             break;
-        // Add cases for other algorithms...
+        case 'SHA-256':
+            topics = `
+                - Hash function basics
+                - Compression function
+                - Merkle-Damgård construction
+                - Security properties
+                - Applications`;
+            break;
+        case 'Blowfish':
+            topics = `
+                - Feistel network
+                - Key scheduling
+                - Security features
+                - P-boxes and S-boxes
+                - Encryption and decryption process`;
+            break;
+        case 'RSA':
+            topics = `
+                - Public key cryptography
+                - Prime number generation
+                - Key generation
+                - Encryption and decryption process
+                - Security considerations`;
+            break;
+        case 'Quantum':
+            topics = `
+                - Quantum key distribution
+                - BB84 protocol
+                - No-cloning theorem
+                - Quantum entanglement
+                - Quantum security`;
+            break;
+        default:
+            topics = `
+                - Basic principles
+                - Security features
+                - Implementation aspects
+                - Real-world applications`;
     }
     
     const prompt = `Generate 5 multiple choice questions about the ${algorithmName} algorithm. 
@@ -156,7 +194,7 @@ function displayQuiz(questions) {
     
     questions.forEach((q, index) => {
         html += `
-            <div class="quiz-question">
+            <div class="quiz-question" data-completed="false">
                 <h3 class="text-xl font-semibold mb-4">Question ${q.id}</h3>
                 <p class="mb-4">${q.question}</p>
                 <div class="quiz-options">
@@ -189,6 +227,10 @@ function checkAnswer(element, selected, correct) {
         sib.setAttribute('data-answered', 'true');
     });
     
+    // Mark the question itself as completed
+    const questionDiv = element.closest('.quiz-question');
+    questionDiv.setAttribute('data-completed', 'true');
+    
     if (selected === correct) {
         element.classList.add('correct');
         updateScore(1);
@@ -200,6 +242,9 @@ function checkAnswer(element, selected, correct) {
             }
         });
     }
+    
+    // Check if all questions are completed after answering this one
+    checkIfQuizCompleted();
 }
 
 function updateScore(increment, total = null) {
@@ -218,17 +263,28 @@ function updateScore(increment, total = null) {
         
         const percentage = (currentScore / totalQuestions) * 100;
         progressBar.style.width = `${percentage}%`;
-        
-        const answeredQuestions = document.querySelectorAll('[data-answered="true"]').length / 4;
-        if (answeredQuestions === totalQuestions) {
-            setTimeout(() => {
-                showFinalScore(currentScore, totalQuestions);
-            }, 1000);
-        }
     }
 }
 
-function showFinalScore(score, total) {
+// New function to check if all questions are completed
+function checkIfQuizCompleted() {
+    const totalQuestions = parseInt(document.getElementById('totalQuestions').textContent);
+    const currentScore = parseInt(document.getElementById('currentScore').textContent);
+    
+    // Count completed questions using the new data-completed attribute
+    const completedQuestions = document.querySelectorAll('.quiz-question[data-completed="true"]').length;
+    
+    console.log(`Quiz progress: ${completedQuestions}/${totalQuestions} questions completed`);
+    
+    if (completedQuestions === totalQuestions) {
+        console.log("All questions completed, showing final score");
+        setTimeout(() => {
+            showFinalScore(currentScore, totalQuestions);
+        }, 1000);
+    }
+}
+
+async function showFinalScore(score, total) {
     const percentage = (score / total) * 100;
     let message = '';
     
@@ -240,19 +296,97 @@ function showFinalScore(score, total) {
     // Store the algorithm name in a data attribute when starting the quiz
     const currentAlgorithm = document.querySelector('.quiz-modal').dataset.algorithm;
 
+    // Save score to server if user is logged in
+    let savedMessage = '';
+    const sessionId = getCookie('session_id');
+    
+    if (sessionId) {
+        try {
+            const response = await fetch(`${API_URL}/save-quiz-score`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Session-ID': sessionId
+                },
+                body: JSON.stringify({
+                    algorithm: currentAlgorithm,
+                    score: score,
+                    totalQuestions: total
+                })
+            });
+            
+            const data = await response.json();
+            if (response.ok) {
+                if (data.new_high_score) {
+                    savedMessage = '<p class="text-green-400 mb-2">New high score saved! 🎉</p>';
+                } else {
+                    savedMessage = '<p class="text-yellow-400 mb-2">Your previous high score was better.</p>';
+                }
+            }
+        } catch (error) {
+            console.error('Error saving score:', error);
+            savedMessage = '<p class="text-red-400 mb-2">Failed to save score.</p>';
+        }
+    } else {
+        savedMessage = '<p class="text-blue-400 mb-2">Sign in to save your score!</p>';
+    }
+
+    // Fetch leaderboard
+    let leaderboardHTML = '';
+    try {
+        const response = await fetch(`${API_URL}/get-leaderboard?algorithm=${currentAlgorithm}`);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.leaderboard && data.leaderboard.length > 0) {
+                leaderboardHTML = `
+                    <div class="leaderboard-section">
+                        <h3 class="text-lg font-bold text-white mb-2">Leaderboard</h3>
+                        <div class="leaderboard">
+                            ${data.leaderboard.map((entry, index) => `
+                                <div class="leaderboard-entry">
+                                    <span class="rank">#${index + 1}</span>
+                                    <span class="username">${entry.username}</span>
+                                    <span class="score">${Math.round(entry.percentage)}%</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+    }
+
     const finalScoreHtml = `
         <div class="final-score">
             <h2 class="text-2xl font-bold text-white mb-4">Quiz Complete!</h2>
             <p class="text-xl text-white mb-2">Your Score: ${score}/${total}</p>
             <p class="text-lg text-cyan-400 mb-4">${message}</p>
-            <button onclick="startQuiz('${currentAlgorithm}')" 
-                    class="try-again-btn">
-                Try Again
-            </button>
+            ${savedMessage}
+            ${leaderboardHTML}
+            <div class="final-buttons">
+                <button onclick="startQuiz('${currentAlgorithm}')" 
+                        class="try-again-btn">
+                    Try Again
+                </button>
+                <button onclick="closeQuiz()" 
+                        class="close-btn">
+                    Close
+                </button>
+            </div>
         </div>
     `;
 
     document.getElementById('quizContent').innerHTML = finalScoreHtml;
+}
+
+// Function to get cookie value by name
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
 }
 
 function closeQuiz() {
@@ -269,4 +403,4 @@ function shuffleArray(array) {
         [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
-} 
+}

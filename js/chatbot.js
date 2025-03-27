@@ -33,6 +33,10 @@ async function sendMessage(message) {
 
 function appendMessage(message, isUser) {
     const chatBox = document.getElementById('chat-messages');
+    if (!chatBox) {
+        console.log('Chat box element not found, ignoring message:', message);
+        return;
+    }
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
     messageDiv.textContent = message;
@@ -67,5 +71,7 @@ async function handleUserInput() {
 
 // Initial message when chat opens
 document.addEventListener('DOMContentLoaded', () => {
-    appendMessage('Hello! I\'m your AI assistant. Ask me anything about security algorithms!', false);
+    if (document.getElementById('chat-messages')) {
+        appendMessage('Hello! I\'m your AI assistant. Ask me anything about security algorithms!', false);
+    }
 }); 

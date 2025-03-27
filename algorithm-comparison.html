@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Algorithm Comparison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-y: auto !important;
+            overflow-x: hidden;
+        }
+
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(31, 37, 46, 0.95);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(1, 233, 248, 0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #01E9F8;
+        }
+
+        .welcome-text {
+            color: #01E9F8;
+            font-size: 1.1rem;
+            margin-right: 1rem;
+        }
+
+        .sign-in-btn {
+            background-color: #01E9F8;
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .sign-in-btn:hover {
+            background-color: #00b3d8;
+            transform: translateY(-2px);
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            color: #1f2937;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .title-gradient {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+        
+        .comparison-results {
+            display: none;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table.comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        table.comparison-table th {
+            background-color: #8b5cf6;
+            color: white;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 15px;
+        }
+        
+        table.comparison-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        table.comparison-table tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        
+        table.comparison-table tr:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .feature-box {
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #8b5cf6;
+        }
+        
+        .feature-box h3 {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #4b5563;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .tag.symmetric {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .tag.asymmetric {
+            background-color: #f59e0b;
+            color: white;
+        }
+        
+        .tag.hash {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .tag.quantum {
+            background-color: #8b5cf6;
+            color: white;
+        }
+        
+        .input-row {
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            background-color: #f9fafb;
+            padding: 8px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        .custom-checkbox:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .custom-checkbox.checked {
+            background-color: #8b5cf6;
+            color: white;
+        }
+        
+        .custom-checkbox input {
+            display: none;
+        }
+        
+        .checkbox-icon {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="key-strength.html">Key Strength Analyzer</a>
+            <a href="algorithm-comparison.html">Algorithm Comparison</a>
+        </div>
+        <div id="userInfo">
+            <!-- This will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 pt-20 pb-10">
+        <h1 class="text-4xl font-bold mb-6 title-gradient text-center">Algorithm Comparison Tool</h1>
+        
+        <div class="card p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Select Algorithms to Compare</h2>
+            
+            <div class="input-row">
+                <label class="block text-gray-700 mb-2">Select algorithms:</label>
+                <div class="checkbox-container">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" value="AES" checked> 
+                        <span class="checkbox-icon"><i class="fas fa-check"></i></span>
+                        AES
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" value="DES"> 
+                        <span class="checkbox-icon"><i class="fas fa-check"></i></span>
+                        DES
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" value="RSA"> 
+                        <span class="checkbox-icon"><i class="fas fa-check"></i></span>
+                        RSA
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" value="SHA256"> 
+                        <span class="checkbox-icon"><i class="fas fa-check"></i></span>
+                        SHA-256
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" value="Blowfish"> 
+                        <span class="checkbox-icon"><i class="fas fa-check"></i></span>
+                        Blowfish
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" value="QKD"> 
+                        <span class="checkbox-icon"><i class="fas fa-check"></i></span>
+                        Quantum Key Distribution
+                    </label>
+                </div>
+            </div>
+            
+            <div class="input-row">
+                <label class="block text-gray-700 mb-2">Comparison factors:</label>
+                <div class="checkbox-container">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" value="speed" checked> 
+                        <span class="checkbox-icon"><i class="fas fa-check"></i></span>
+                        Speed
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" value="security" checked> 
+                        <span class="checkbox-icon"><i class="fas fa-check"></i></span>
+                        Security
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" value="keySize" checked> 
+                        <span class="checkbox-icon"><i class="fas fa-check"></i></span>
+                        Key Size
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" value="resources"> 
+                        <span class="checkbox-icon"><i class="fas fa-check"></i></span>
+                        Resource Usage
+                    </label>
+                    <label class="custom-checkbox">
+                        <input type="checkbox" value="implementation"> 
+                        <span class="checkbox-icon"><i class="fas fa-check"></i></span>
+                        Implementation Complexity
+                    </label>
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <button id="compareBtn" class="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1">
+                    Compare Algorithms
+                </button>
+            </div>
+        </div>
+        
+        <div id="comparisonResults" class="comparison-results">
+            <div class="card p-6 mb-6">
+                <h2 class="text-2xl font-semibold mb-4">Performance Comparison</h2>
+                <div class="chart-container">
+                    <canvas id="speedChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card p-6 mb-6">
+                <h2 class="text-2xl font-semibold mb-4">Security Comparison</h2>
+                <div class="chart-container">
+                    <canvas id="securityChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card p-6 mb-6">
+                <h2 class="text-2xl font-semibold mb-4">Detailed Comparison</h2>
+                <div class="mb-4 text-sm text-gray-600">
+                    <p><strong>Security Level (1-10):</strong> Measures the algorithm's resilience against attacks. Higher scores indicate greater security against current cryptanalytic techniques.</p>
+                    <p><strong>Resource Usage (1-10):</strong> Indicates computational and memory resources required. Lower scores are better, showing more efficient resource utilization.</p>
+                    <p><strong>Implementation Complexity (1-10):</strong> Reflects how difficult it is to correctly implement the algorithm. Lower scores indicate simpler implementation with fewer potential pitfalls.</p>
+                </div>
+                <div class="table-container">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Algorithm</th>
+                                <th>Type</th>
+                                <th>Key Size</th>
+                                <th>Speed (Encryption)</th>
+                                <th>Speed (Decryption)</th>
+                                <th>Security Level</th>
+                                <th>Resource Usage</th>
+                                <th>Implementation</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparisonTableBody">
+                            <!-- Table rows will be added by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card p-6">
+                <h2 class="text-2xl font-semibold mb-4">Algorithm Characteristics</h2>
+                <div id="algorithmFeatures">
+                    <!-- Feature boxes will be added by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Algorithm data
+        const algorithmData = {
+            AES: {
+                name: "AES",
+                type: "Symmetric",
+                keySize: "128/192/256 bits",
+                encryptionSpeed: 9,
+                decryptionSpeed: 9,
+                securityLevel: 9,
+                resourceUsage: 3,
+                implementation: 4,
+                features: ["Block cipher", "Round-based structure", "Substitution-permutation network", "NIST standard"],
+                tags: ["symmetric"],
+                description: "Advanced Encryption Standard (AES) is a symmetric block cipher chosen by the U.S. government to protect classified information. It is widely used worldwide and is implemented in both hardware and software."
+            },
+            DES: {
+                name: "DES",
+                type: "Symmetric",
+                keySize: "56 bits",
+                encryptionSpeed: 7,
+                decryptionSpeed: 7,
+                securityLevel: 3,
+                resourceUsage: 2,
+                implementation: 3,
+                features: ["Block cipher", "Feistel network", "56-bit key", "Deprecated for sensitive data"],
+                tags: ["symmetric"],
+                description: "Data Encryption Standard (DES) is an older symmetric-key algorithm for data encryption. Due to its relatively short key length of 56 bits, it is now considered insecure against brute force attacks."
+            },
+            Blowfish: {
+                name: "Blowfish",
+                type: "Symmetric",
+                keySize: "32-448 bits",
+                encryptionSpeed: 8,
+                decryptionSpeed: 8,
+                securityLevel: 7,
+                resourceUsage: 2,
+                implementation: 4,
+                features: ["Block cipher", "Feistel network", "Variable key length", "Public domain"],
+                tags: ["symmetric"],
+                description: "Blowfish is a symmetric-key block cipher designed by Bruce Schneier in 1993. It has a variable key length from 32 bits to 448 bits and is known for its speed and effectiveness."
+            },
+            RSA: {
+                name: "RSA",
+                type: "Asymmetric",
+                keySize: "1024/2048/4096 bits",
+                encryptionSpeed: 3,
+                decryptionSpeed: 1,
+                securityLevel: 7,
+                resourceUsage: 8,
+                implementation: 6,
+                features: ["Public-key cryptography", "Based on factoring problem", "Digital signatures", "Key exchange"],
+                tags: ["asymmetric"],
+                description: "RSA (Rivest–Shamir–Adleman) is a public-key cryptosystem widely used for secure data transmission. The security of RSA is based on the practical difficulty of factoring the product of two large prime numbers."
+            },
+            SHA256: {
+                name: "SHA-256",
+                type: "Hash Function",
+                keySize: "N/A",
+                encryptionSpeed: 8,
+                decryptionSpeed: 0,
+                securityLevel: 8,
+                resourceUsage: 4,
+                implementation: 5,
+                features: ["One-way function", "Collision-resistant", "Fixed output size", "Data integrity"],
+                tags: ["hash"],
+                description: "SHA-256 is a cryptographic hash function that takes an input and produces a fixed-size (256-bit) hash value. It is used for digital signatures, message authentication codes, and other forms of authentication."
+            },
+            QKD: {
+                name: "Quantum Key Distribution",
+                type: "Quantum",
+                keySize: "Variable",
+                encryptionSpeed: 1,
+                decryptionSpeed: 1,
+                securityLevel: 10,
+                resourceUsage: 10,
+                implementation: 10,
+                features: ["Quantum properties", "Physical security", "Heisenberg uncertainty", "Unconditional security"],
+                tags: ["quantum"],
+                description: "Quantum Key Distribution uses quantum mechanics principles to secure communication. It allows two parties to produce a shared random secret key known only to them, which can then be used to encrypt and decrypt messages."
+            }
+        };
+
+        // Function to handle checkbox styling
+        function setupCheckboxes() {
+            document.querySelectorAll('.custom-checkbox').forEach(checkbox => {
+                const input = checkbox.querySelector('input');
+                
+                // Set initial state
+                if (input.checked) {
+                    checkbox.classList.add('checked');
+                }
+                
+                // Add event listener
+                checkbox.addEventListener('click', () => {
+                    input.checked = !input.checked;
+                    if (input.checked) {
+                        checkbox.classList.add('checked');
+                    } else {
+                        checkbox.classList.remove('checked');
+                    }
+                });
+            });
+        }
+
+        // Function to get selected algorithms
+        function getSelectedAlgorithms() {
+            const selected = [];
+            document.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach(checkbox => {
+                if (checkbox.checked && Object.keys(algorithmData).includes(checkbox.value)) {
+                    selected.push(checkbox.value);
+                }
+            });
+            return selected;
+        }
+
+        // Function to get selected comparison factors
+        function getSelectedFactors() {
+            const selected = [];
+            document.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach(checkbox => {
+                if (checkbox.checked && !Object.keys(algorithmData).includes(checkbox.value)) {
+                    selected.push(checkbox.value);
+                }
+            });
+            return selected;
+        }
+
+        // Function to create performance chart
+        function createSpeedChart(algorithms) {
+            const ctx = document.getElementById('speedChart').getContext('2d');
+            
+            // Check if a chart already exists and destroy it
+            if (window.speedChartInstance) {
+                window.speedChartInstance.destroy();
+            }
+            
+            const labels = algorithms.map(algo => algorithmData[algo].name);
+            const encryptionData = algorithms.map(algo => algorithmData[algo].encryptionSpeed);
+            const decryptionData = algorithms.map(algo => algorithmData[algo].decryptionSpeed);
+            
+            window.speedChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Encryption Speed',
+                            data: encryptionData,
+                            backgroundColor: 'rgba(139, 92, 246, 0.7)',
+                            borderColor: 'rgba(139, 92, 246, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Decryption Speed',
+                            data: decryptionData,
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            title: {
+                                display: true,
+                                text: 'Speed Rating (0-10)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            return window.speedChartInstance;
+        }
+
+        // Function to create security chart
+        function createSecurityChart(algorithms) {
+            const ctx = document.getElementById('securityChart').getContext('2d');
+            
+            // Check if a chart already exists and destroy it
+            if (window.securityChartInstance) {
+                window.securityChartInstance.destroy();
+            }
+            
+            const labels = algorithms.map(algo => algorithmData[algo].name);
+            const securityData = algorithms.map(algo => algorithmData[algo].securityLevel);
+            
+            window.securityChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Security Level', 'Key Size', 'Encryption Speed', 'Resource Efficiency', 'Implementation Ease'],
+                    datasets: algorithms.map(algo => {
+                        const data = algorithmData[algo];
+                        // Generate a unique color for each algorithm
+                        const hue = Math.floor(Math.random() * 360);
+                        return {
+                            label: data.name,
+                            data: [
+                                data.securityLevel,
+                                data.type === 'Hash Function' ? 5 : (data.keySize.includes('256') ? 9 : (data.keySize.includes('128') ? 7 : 5)),
+                                data.encryptionSpeed,
+                                10 - data.resourceUsage, // Inverse for better visualization
+                                10 - data.implementation // Inverse for better visualization
+                            ],
+                            backgroundColor: `hsla(${hue}, 70%, 60%, 0.2)`,
+                            borderColor: `hsla(${hue}, 70%, 60%, 1)`,
+                            pointBackgroundColor: `hsla(${hue}, 70%, 60%, 1)`,
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: `hsla(${hue}, 70%, 60%, 1)`
+                        };
+                    })
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 10
+                        }
+                    }
+                }
+            });
+            
+            return window.securityChartInstance;
+        }
+
+        // Function to populate comparison table
+        function populateComparisonTable(algorithms) {
+            const tableBody = document.getElementById('comparisonTableBody');
+            tableBody.innerHTML = '';
+            
+            algorithms.forEach(algo => {
+                const data = algorithmData[algo];
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td><strong>${data.name}</strong></td>
+                    <td>${data.type}</td>
+                    <td>${data.keySize}</td>
+                    <td>${data.encryptionSpeed}/10</td>
+                    <td>${data.decryptionSpeed}/10</td>
+                    <td>${data.securityLevel}/10</td>
+                    <td>${data.resourceUsage}/10</td>
+                    <td>${data.implementation}/10</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to create algorithm feature boxes
+        function createFeatureBoxes(algorithms) {
+            const featuresContainer = document.getElementById('algorithmFeatures');
+            featuresContainer.innerHTML = '';
+            
+            algorithms.forEach(algo => {
+                const data = algorithmData[algo];
+                const featureBox = document.createElement('div');
+                featureBox.className = 'feature-box';
+                
+                let tagsHTML = '';
+                data.tags.forEach(tag => {
+                    tagsHTML += `<span class="tag ${tag}">${tag}</span>`;
+                });
+                
+                let featuresHTML = '';
+                data.features.forEach(feature => {
+                    featuresHTML += `<li>${feature}</li>`;
+                });
+                
+                featureBox.innerHTML = `
+                    <h3>${data.name}</h3>
+                    <div class="tags mb-2">${tagsHTML}</div>
+                    <p class="mb-2">${data.description}</p>
+                    <strong>Key Features:</strong>
+                    <ul class="ml-5 mt-1 list-disc">
+                        ${featuresHTML}
+                    </ul>
+                `;
+                
+                featuresContainer.appendChild(featureBox);
+            });
+        }
+
+        // Function to compare algorithms
+        function compareAlgorithms() {
+            const selectedAlgorithms = getSelectedAlgorithms();
+            if (selectedAlgorithms.length < 2) {
+                alert('Please select at least two algorithms to compare.');
+                return;
+            }
+            
+            // Show results section
+            document.getElementById('comparisonResults').style.display = 'block';
+            
+            // Create charts and populate data
+            createSpeedChart(selectedAlgorithms);
+            createSecurityChart(selectedAlgorithms);
+            populateComparisonTable(selectedAlgorithms);
+            createFeatureBoxes(selectedAlgorithms);
+            
+            // Scroll to results
+            document.getElementById('comparisonResults').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Initialize checkboxes
+        document.addEventListener('DOMContentLoaded', () => {
+            setupCheckboxes();
+            
+            // Add event listener to compare button
+            document.getElementById('compareBtn').addEventListener('click', compareAlgorithms);
+            
+            // Check login status
+            checkLoginStatus();
+        });
+
+        // Function to check login status
+        function checkLoginStatus() {
+            const sessionId = getCookie('session_id');
+            const userInfo = document.getElementById('userInfo');
+            
+            if (!sessionId) {
+                userInfo.innerHTML = `
+                    <a href="login.html">
+                        <button class="sign-in-btn" title="Sign in to your account">Sign In</button>
+                    </a>
+                `;
+                return;
+            }
+            
+            fetch('https://security-viz-api.onrender.com/check-session', {
+                method: 'GET',
+                headers: {
+                    'X-Session-ID': sessionId,
+                    'Accept': 'application/json'
+                },
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.authenticated) {
+                    userInfo.innerHTML = `
+                        <span class="welcome-text">Welcome, ${data.username}</span>
+                        <button class="sign-in-btn" onclick="logout()" title="Sign out">Logout</button>
+                    `;
+                } else {
+                    // If session is invalid, remove the cookie
+                    document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                    userInfo.innerHTML = `
+                        <a href="login.html">
+                            <button class="sign-in-btn" title="Sign in to your account">Sign In</button>
+                        </a>
+                    `;
+                }
+            })
+            .catch(error => {
+                document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                userInfo.innerHTML = `
+                    <a href="login.html">
+                        <button class="sign-in-btn" title="Sign in to your account">Sign In</button>
+                    </a>
+                `;
+            });
+        }
+
+        // Function to get cookie value
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        // Function to handle logout
+        async function logout() {
+            const sessionId = getCookie('session_id');
+            if (!sessionId) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('https://security-viz-api.onrender.com/logout', {
+                    method: 'POST',
+                    headers: {
+                        'X-Session-ID': sessionId,
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+
+                // Remove the session cookie regardless of server response
+                document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                window.location.reload();
+            } catch (error) {
+                console.error('Logout failed:', error);
+                // Still remove cookie and reload on error
+                document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+</html> 

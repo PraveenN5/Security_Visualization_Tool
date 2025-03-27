@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login with Email Verification</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1F252E 0%, #000 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            background-color: rgba(31, 37, 46, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(1, 233, 248, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #01E9F8;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #01E9F8;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid rgba(1, 233, 248, 0.2);
+            border-radius: 8px;
+            background-color: rgba(42, 51, 64, 0.8);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #01E9F8;
+            box-shadow: 0 0 0 2px rgba(1, 233, 248, 0.2);
+        }
+
+        .password-strength {
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0;
+            transition: all 0.3s ease;
+        }
+
+        .strength-text {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.3rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #01E9F8;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #00b3d8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(1, 233, 248, 0.3);
+        }
+
+        .error {
+            color: #ff4444;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .success {
+            color: #00C851;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .otp-section {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(1, 233, 248, 0.1);
+        }
+
+        .resend-otp {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .resend-otp button {
+            background: none;
+            border: none;
+            color: #01E9F8;
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.875rem;
+        }
+
+        .resend-otp button:hover {
+            text-decoration: underline;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .register-link a {
+            color: #01E9F8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .password-requirements {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.5rem;
+        }
+
+        .password-requirements ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .password-requirements li {
+            margin: 0.2rem 0;
+        }
+
+        .password-requirements li.valid {
+            color: #00C851;
+        }
+
+        .password-requirements li.valid::before {
+            content: "✓";
+            margin-right: 0.5rem;
+        }
+
+        .password-requirements li.invalid {
+            color: #ff4444;
+        }
+
+        .password-requirements li.invalid::before {
+            content: "✗";
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="password" name="password" required>
+                    <i id="togglePassword" class="fas fa-eye-slash" style="position: absolute; right: 12px; top: 12px; cursor: pointer; color: #01E9F8;"></i>
+                </div>
+            </div>
+            <button type="submit">Login</button>
+            <div id="loginError" class="error"></div>
+        </form>
+
+        <div class="register-link">
+            <p>Don't have an account? <a href="#" id="showRegister">Register</a></p>
+        </div>
+    </div>
+
+    <div class="container" id="registerContainer" style="display: none;">
+        <h2>Register</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="registerEmail">Email</label>
+                <input type="email" id="registerEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="registerPassword">Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="registerPassword" name="password" required>
+                    <i id="toggleRegisterPassword" class="fas fa-eye-slash" style="position: absolute; right: 12px; top: 12px; cursor: pointer; color: #01E9F8;"></i>
+                </div>
+                <div class="password-strength">
+                    <div class="strength-bar" id="strengthBar"></div>
+                </div>
+                <div class="strength-text" id="strengthText">Password strength: <span>Weak</span></div>
+                <div class="password-requirements">
+                    <ul>
+                        <li id="length">At least 8 characters</li>
+                        <li id="number">Contains a number</li>
+                        <li id="special">Contains a special character</li>
+                        <li id="uppercase">Contains an uppercase letter</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <div style="position: relative;">
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    <i id="toggleConfirmPassword" class="fas fa-eye-slash" style="position: absolute; right: 12px; top: 12px; cursor: pointer; color: #01E9F8;"></i>
+                </div>
+            </div>
+            <button type="submit">Register</button>
+            <div id="registerError" class="error"></div>
+        </form>
+
+        <div class="register-link">
+            <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+        </div>
+    </div>
+
+    <div class="container" id="otpContainer" style="display: none;">
+        <h2>Verify Email</h2>
+        <p>Please enter the OTP sent to your email.</p>
+        <form id="otpForm">
+            <div class="form-group">
+                <label for="otp">OTP</label>
+                <input type="text" id="otp" name="otp" required>
+            </div>
+            <button type="submit">Verify OTP</button>
+            <div id="otpError" class="error"></div>
+        </form>
+        <div class="resend-otp">
+            <button id="resendOtp">Resend OTP</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://security-viz-api.onrender.com';
+        let currentEmail = '';
+
+        // Function to get cookie value by name
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) {
+                return parts.pop().split(';').shift();
+            }
+            return null;
+        }
+
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            const requirements = {
+                length: password.length >= 8,
+                number: /\d/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+                uppercase: /[A-Z]/.test(password)
+            };
+
+            // Update requirement indicators
+            Object.keys(requirements).forEach(req => {
+                const element = document.getElementById(req);
+                if (requirements[req]) {
+                    element.classList.remove('invalid');
+                    element.classList.add('valid');
+                    strength++;
+                } else {
+                    element.classList.remove('valid');
+                    element.classList.add('invalid');
+                }
+            });
+
+            // Update strength bar and text
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText').querySelector('span');
+            const strengthPercentage = (strength / 4) * 100;
+
+            strengthBar.style.width = `${strengthPercentage}%`;
+            strengthBar.style.backgroundColor = 
+                strengthPercentage < 25 ? '#ff4444' :
+                strengthPercentage < 50 ? '#ffbb33' :
+                strengthPercentage < 75 ? '#00C851' :
+                '#007E33';
+
+            strengthText.textContent = 
+                strengthPercentage < 25 ? 'Weak' :
+                strengthPercentage < 50 ? 'Medium' :
+                strengthPercentage < 75 ? 'Strong' :
+                'Very Strong';
+
+            return strength === 4;
+        }
+
+        // Form switching
+        document.getElementById('showRegister').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('registerContainer').style.display = 'block';
+        });
+
+        document.getElementById('showLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('registerContainer').style.display = 'none';
+            document.querySelector('.container').style.display = 'block';
+        });
+
+        // Password strength monitoring
+        document.getElementById('registerPassword').addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+        });
+
+        // Register form submission
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('registerError');
+
+            if (password !== confirmPassword) {
+                errorDiv.textContent = "Passwords do not match";
+                return;
+            }
+
+            if (!checkPasswordStrength(password)) {
+                errorDiv.textContent = "Password does not meet security requirements";
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentEmail = email;
+                    document.getElementById('registerContainer').style.display = 'none';
+                    document.getElementById('otpContainer').style.display = 'block';
+                    errorDiv.textContent = '';
+                } else {
+                    errorDiv.textContent = data.error || 'Registration failed';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'An error occurred. Please try again.';
+            }
+        });
+
+        // OTP verification
+        document.getElementById('otpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const otp = document.getElementById('otp').value;
+            const errorDiv = document.getElementById('otpError');
+
+            try {
+                const response = await fetch(`${API_URL}/verify-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: currentEmail, otp })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('otpContainer').style.display = 'none';
+                    document.querySelector('.container').style.display = 'block';
+                    errorDiv.textContent = '';
+                    alert('Email verified successfully! Please login.');
+                } else {
+                    errorDiv.textContent = data.error || 'Verification failed';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'An error occurred. Please try again.';
+            }
+        });
+
+        // Resend OTP
+        document.getElementById('resendOtp').addEventListener('click', async () => {
+            const errorDiv = document.getElementById('otpError');
+
+            try {
+                const response = await fetch(`${API_URL}/resend-otp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: currentEmail })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    errorDiv.textContent = '';
+                    alert('New OTP sent successfully!');
+                } else {
+                    errorDiv.textContent = data.error || 'Failed to resend OTP';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'An error occurred. Please try again.';
+            }
+        });
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+
+            try {
+                console.log('Attempting login...');
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Origin': 'https://securityviz.site'
+                    },
+                    credentials: 'include',
+                    mode: 'cors',
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                console.log('Login response:', data);
+
+                if (response.ok && data.session_id) {
+                    errorDiv.textContent = '';
+                    
+                    // Set session ID in a cookie with proper attributes for HTTPS
+                    const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+                    document.cookie = `session_id=${data.session_id}; path=/; max-age=604800; SameSite=Lax${secure}`;
+                    
+                    // Redirect to index page
+                    window.location.href = 'index.html';
+                } else {
+                    console.error('Login failed:', data.error || 'No session ID in response');
+                    errorDiv.textContent = data.error || 'Login failed - no session provided';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorDiv.textContent = 'An error occurred. Please try again.';
+            }
+        });
+
+        // Password visibility toggle for login
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.classList.remove('fa-eye-slash');
+                this.classList.add('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                this.classList.remove('fa-eye');
+                this.classList.add('fa-eye-slash');
+            }
+        });
+        
+        // Password visibility toggle for register
+        document.getElementById('toggleRegisterPassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('registerPassword');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.classList.remove('fa-eye-slash');
+                this.classList.add('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                this.classList.remove('fa-eye');
+                this.classList.add('fa-eye-slash');
+            }
+        });
+        
+        // Password visibility toggle for confirm password
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('confirmPassword');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.classList.remove('fa-eye-slash');
+                this.classList.add('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                this.classList.remove('fa-eye');
+                this.classList.add('fa-eye-slash');
+            }
+        });
+    </script>
+</body>
+</html>

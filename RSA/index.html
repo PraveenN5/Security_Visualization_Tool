@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"  integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 
     <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         [id]::before {
             content: '';
@@ -21,13 +22,67 @@
             visibility: hidden;
         }
 
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            color: #f0f0f0;
+            min-height: 100vh;
+            overflow-y: auto !important;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: transparent;
+            padding: 15px;
+            max-width: 100%;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            border: none;
+            color: #1f2937;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-title {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .form-text {
+            color: #6b7280 !important;
+        }
+
+        .form-control {
+            background: white !important;
+            color: #1f2937 !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+            border-color: #8b5cf6 !important;
+        }
+
         .nav-item:hover {
             background-color: #0354cb;
         }
 
         .quiz-button {
-            position: fixed;
-            top: 20px;
+            position: absolute;
+            top: 80px;
             right: 20px;
             background-color: #01E9F8;
             color: #1F252E;
@@ -40,7 +95,7 @@
             z-index: 1000;
         }
         
-        /* Add all other quiz styles from AES/index.html */
+        /* Quiz modal styles */
         .quiz-modal {
             display: none;
             position: fixed;
@@ -57,704 +112,909 @@
             z-index: 1001;
             overflow-y: auto;
         }
-        /* Add remaining quiz styles */
+
+        /* Common styles for both desktop and mobile */
+        .p-q-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .p-section, .q-section {
+            width: 50%;
+        }
+
+        .parameter-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .parameter-col {
+            flex: 1;
+        }
+
+        .list-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .list-group-item {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #1f2937;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .list-group-item:hover {
+            background-color: #8b5cf6;
+            color: white;
+            border-color: #7c3aed;
+        }
+
+        /* Desktop specific styles */
+        @media (min-width: 413px) {
+            .container {
+                padding: 15px;
+            }
+
+            .card {
+                margin-bottom: 15px;
+            }
+
+            .list-group-item {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+
+        /* Mobile specific styles */
+        @media (max-width: 412px) {
+            .container {
+                width: 100%;
+                padding: 8px;
+                max-width: 412px;
+            }
+            
+            .card {
+                margin-bottom: 10px;
+            }
+            
+            .card-body {
+                padding: 10px;
+            }
+            
+            .form-control {
+                font-size: 14px;
+                padding: 6px;
+            }
+            
+            .list-group-item {
+                font-size: 12px;
+                padding: 4px;
+                text-align: center;
+            }
+            
+            .btn {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+            
+            .quiz-button {
+                top: 8px;
+                right: 8px;
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            
+            .quiz-modal {
+                width: 95%;
+                padding: 1rem;
+            }
+
+            h4.card-title {
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+
+            small.form-text {
+                font-size: 11px;
+            }
+        }
+
+        .title-gradient {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
     </style>
     <link rel="stylesheet" href="../css/quiz.css">
     <script src="../js/chatbot.js"></script>
     <script src="../js/quiz.js"></script>
+    <script src="../js/leaderboard.js"></script>
 </head>
 
 <body>
-            <div class="container">
-                <h4 id="rsa-nav">RSA</h4>
-                <div class="row">
-                    <div class="col-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">p</h4>
-                                <div class="form-group">
-                                    <input type="number" class="form-control" name="txtp" value="61" id="txtp"
-                                        aria-describedby="helpId" placeholder="p">
-                                    <small id="helpId" class="form-text text-muted">p is prime</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="list-group">
-                            <button type="button" class="btn btn-secondary p-primes list-group-item">17</button>
-                            <button type="button" class="btn btn-secondary p-primes list-group-item">859</button>
-                            <button type="button" class="btn btn-secondary p-primes list-group-item">619</button>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="list-group">
-                            <button type="button" class="btn btn-secondary p-primes list-group-item">1249</button>
-                            <button type="button" class="btn btn-secondary p-primes list-group-item">2663</button>
-                            <button type="button" class="btn btn-secondary p-primes list-group-item">3593</button>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="list-group">
-                            <button type="button" class="btn btn-secondary p-primes list-group-item">5641</button>
-                            <button type="button" class="btn btn-primary p-primes list-group-item">53093</button>
-                            <button type="button" class="btn btn-primary p-primes list-group-item">41077</button>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="list-group">
-                            <button type="button" class="btn btn-secondary p-primes list-group-item">75539</button>
-                            <button type="button" class="btn btn-secondary p-primes list-group-item">613471</button>
-                            <button type="button" class="btn btn-success p-primes list-group-item">999491</button>
-                        </div>
-                    </div>
-                </div>
-                <div style="margin-top:20px;"></div>
-                <div class="row">
-                    <div class="col-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">q</h4>
-                                <div class="form-group">
-                                    <input type="number" class="form-control" name="txtq" value="53" id="txtq"
-                                        aria-describedby="helpId" placeholder="q">
-                                    <small id="helpId" class="form-text text-muted">q is prime</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="list-group">
-                            <button type="button" class="btn btn-secondary q-primes list-group-item">433</button>
-                            <button type="button" class="btn btn-secondary q-primes list-group-item">1039</button>
-                            <button type="button" class="btn btn-secondary q-primes list-group-item">1847</button>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="list-group">
-                            <button type="button" class="btn btn-secondary q-primes list-group-item">4421</button>
-                            <button type="button" class="btn btn-secondary q-primes list-group-item">5419</button>
-                            <button type="button" class="btn btn-secondary q-primes list-group-item">6053</button>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="list-group">
-                            <button type="button" class="btn btn-primary q-primes list-group-item">75253</button>
-                            <button type="button" class="btn btn-secondary q-primes list-group-item">39359</button>
-                            <button type="button" class="btn btn-secondary q-primes list-group-item">692581</button>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="list-group">
-                            <button type="button" class="btn btn-success q-primes list-group-item">126199</button>
-                            <button type="button" class="btn btn-primary q-primes list-group-item">431147</button>
-                            <button type="button" class="btn btn-primary q-primes list-group-item">990809</button>
-                        </div>
-                    </div>
-                </div>
-                <div style="margin-top:20px;"></div>
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">n</h4>
-                                <div class="form-group">
-                                    <input type="number" class="form-control" name="txtn" value="3233" id="txtn"
-                                        aria-describedby="helpId" placeholder="n">
-                                    <small id="helpId" class="form-text text-muted">n = p * q</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Navigation Bar -->
+    <div class="nav-bar" style="position: fixed; top: 0; left: 0; right: 0; background-color: rgba(31, 37, 46, 0.95); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid rgba(1, 233, 248, 0.1);">
+        <div class="nav-links" style="display: flex; align-items: center;">
+            <a href="../index.html" style="color: #fff; text-decoration: none; margin-right: 1.5rem; transition: color 0.3s ease;">Home</a>
+            <a href="../key-strength.html" style="color: #fff; text-decoration: none; margin-right: 1.5rem; transition: color 0.3s ease;">Key Strength Analyzer</a>
+            <a href="../algorithm-comparison.html" style="color: #fff; text-decoration: none; margin-right: 1.5rem; transition: color 0.3s ease;">Algorithm Comparison</a>
+        </div>
+        <div id="userInfo">
+            <!-- This will be populated by JavaScript -->
+        </div>
+    </div>
 
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">ϕ(n)</h4>
-                                <div class="form-group">
-                                    <input type="number" class="form-control" disabled="true" name="phin" value="780"
-                                        id="phin" aria-describedby="helpId" placeholder="phin">
-                                    <small id="helpId" class="form-text text-muted">ϕ(n) = lcm(p − 1, q − 1)</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <div style="position: fixed; top: 80px; right: 20px; z-index: 999; display: flex; gap: 10px;">
+        <button class="quiz-button" onclick="startQuiz('RSA')" style="position: static;">Take Quiz</button>
+    </div>
 
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">x</h4>
-                                <div class="form-group">
-                                    <input type="number" class="form-control" name="txtx" id="txtx" value="65"
-                                        aria-describedby="helpId" placeholder="x">
-                                    <small id="helpId" class="form-text text-muted">x ∈ Z<sub>p</sub></small>
-                                </div>
-                                <div style="padding-top: 10px;"></div>
-                                <div class="form-group" style="text-align: center;">
-                                    <button type="button" class="btn btn-dark" id="btnRandom"
-                                        style="padding-left: 50px;padding-right: 50px;">Random</button>
-                                </div>
+    <!-- Leaderboard Button Container (Hardcoded) -->
+    <div style="position: fixed; top: 80px; left: 20px; z-index: 999; display: flex; gap: 10px;">
+        <button 
+          class="leaderboard-button" 
+          onclick="showLeaderboard('RSA')" 
+          style="background: linear-gradient(135deg, #3a7bd5, #00d2ff); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 20px rgba(58, 123, 213, 0.4); transition: all 0.3s ease;">
+          🏆 Leaderboard
+        </button>
+    </div>
 
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">E</h4>
-                                <div class="form-group">
-                                    <input type="number" class="form-control" name="txtE" id="txtE" value="17"
-                                        aria-describedby="helpId" placeholder="E">
-                                    <small id="helpId" class="form-text text-muted">E ∈ U(Z<sub>ϕ(n)</sub>)</small>
-                                </div>
-                                <div style="margin-top: 10px;"></div>
-                                <div class="form-group" style="text-align: center;">
-                                    <button type="button" class="btn btn-warning" id="btnFindCoprimeE"
-                                        style="padding: 0.375rem 3rem;">Find coprime</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">D</h4>
-                                <div class="form-group">
-                                    <input type="number" class="form-control" name="txtD" id="txtD" value="413"
-                                        aria-describedby="D" placeholder="D">
-                                    <small id="helpD" class="form-text text-muted">D ∈ Z<sub>ϕ(n)</sub></small>
-                                </div>
-                                <div style="padding-top: 10px;"></div>
-                                <div class="form-group" style="text-align: center;">
-                                    <button type="button" class="btn btn-danger" id="btnInverse"
-                                        style="padding: 0.375rem 1.75rem;">Brute Force Inverse</button>
-                                </div>
-                                <div style="padding-top: 10px;"></div>
-                                <div class="form-group" style="text-align: center;">
-                                    <button type="button" class="btn btn-warning" id="btnFastInverse"
-                                        style="padding: 0.375rem 2.7rem;">E<sup>ϕ(n)-2</sup> mod ϕ(n)</button>
-                                </div>
-                            </div>
+    <h1 class="text-center mt-4 mb-4 title-gradient" style="padding-top: 80px;">RSA Algorithm Visualization</h1>
+    <div class="container">
+        <h4 id="rsa-nav">RSA</h4>
+        <div class="p-q-container">
+            <!-- P Section -->
+            <div class="p-section">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">p</h4>
+                        <div class="form-group">
+                            <input type="number" class="form-control" name="txtp" value="61" id="txtp"
+                                aria-describedby="helpId" placeholder="p">
+                            <small id="helpId" class="form-text text-muted">p is prime</small>
                         </div>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div style="padding: 10px; text-align: center;">
-                        <!-- m = x<sup>E</sup> &nbsp;mod p -->
-                    </div>
+                <div class="list-group">
+                    <button type="button" class="btn btn-secondary p-primes list-group-item">17</button>
+                    <button type="button" class="btn btn-secondary p-primes list-group-item">859</button>
+                    <button type="button" class="btn btn-secondary p-primes list-group-item">619</button>
+                    <button type="button" class="btn btn-secondary p-primes list-group-item">1249</button>
+                    <button type="button" class="btn btn-secondary p-primes list-group-item">2663</button>
+                    <button type="button" class="btn btn-secondary p-primes list-group-item">3593</button>
                 </div>
-                <div class="row">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-3">
-                                    <div class="form-group">
-                                        <button type="button" class="btn btn-success" id="btnEncrypt"
-                                            style="width: 100%;">RSA Encryption</button>
-                                    </div>
-                                </div>
-                                <div class="col-3 align-middle" style="text-align: center;">
-                                    <div class="align-middle" style="display: flex;
-                                justify-content: center;align-items: center;height: 100%;">
-                                        m = x<sup>E</sup> &nbsp;mod n
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <input type="number" class="form-control" name="txtEncrypt" id="txtEncrypt"
-                                        aria-describedby="helpId" placeholder="m = x^E mod n">
-                                </div>
-                            </div>
+            </div>
+
+            <!-- Q Section -->
+            <div class="q-section">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">q</h4>
+                        <div class="form-group">
+                            <input type="number" class="form-control" name="txtq" value="53" id="txtq"
+                                aria-describedby="helpId" placeholder="q">
+                            <small id="helpId" class="form-text text-muted">q is prime</small>
                         </div>
                     </div>
                 </div>
-                <div class="row" style="padding-top: 10px;">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-3">
-                                    <div class="form-group">
-                                        <button type="button" class="btn btn-primary" id="btnDecrypt"
-                                            style="width: 100%;">RSA Decryption</button>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="align-middle" style="display: flex;
-                                justify-content: center;align-items: center;height: 100%;">
-                                        x = m<sup>D</sup> &nbsp;mod n
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <input type="number" class="form-control" name="txtDecrypt" id="txtDecrypt"
-                                        aria-describedby="helpDecrypt" placeholder="x = m^D mod n">
-                                </div>
-                            </div>
+                <div class="list-group">
+                    <button type="button" class="btn btn-secondary q-primes list-group-item">433</button>
+                    <button type="button" class="btn btn-secondary q-primes list-group-item">1039</button>
+                    <button type="button" class="btn btn-secondary q-primes list-group-item">1847</button>
+                    <button type="button" class="btn btn-secondary q-primes list-group-item">4421</button>
+                    <button type="button" class="btn btn-secondary q-primes list-group-item">5419</button>
+                    <button type="button" class="btn btn-secondary q-primes list-group-item">6053</button>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:20px;"></div>
+        <div class="parameter-row">
+            <div class="parameter-col">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">n</h4>
+                        <div class="form-group">
+                            <input type="number" class="form-control" name="txtn" value="3233" id="txtn"
+                                aria-describedby="helpId" placeholder="n">
+                            <small id="helpId" class="form-text text-muted">n = p * q</small>
                         </div>
                     </div>
                 </div>
             </div>
-            <div style="margin-top:50px;"></div>
-            <hr />
+
+            <div class="parameter-col">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">ϕ(n)</h4>
+                        <div class="form-group">
+                            <input type="number" class="form-control" disabled="true" name="phin" value="780"
+                                id="phin" aria-describedby="helpId" placeholder="phin">
+                            <small id="helpId" class="form-text text-muted">ϕ(n) = lcm(p − 1, q − 1)</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="parameter-row">
+            <div class="parameter-col">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">x</h4>
+                        <div class="form-group">
+                            <input type="number" class="form-control" name="txtx" id="txtx" value="65"
+                                aria-describedby="helpId" placeholder="x">
+                            <small id="helpId" class="form-text text-muted">x ∈ Z<sub>p</sub></small>
+                        </div>
+                        <div style="padding-top: 10px;"></div>
+                        <div class="form-group" style="text-align: center;">
+                            <button type="button" class="btn btn-dark" id="btnRandom"
+                                style="padding-left: 50px;padding-right: 50px;">Random</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="parameter-col">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">E</h4>
+                        <div class="form-group">
+                            <input type="number" class="form-control" name="txtE" id="txtE" value="17"
+                                aria-describedby="helpId" placeholder="E">
+                            <small id="helpId" class="form-text text-muted">E ∈ U(Z<sub>ϕ(n)</sub>)</small>
+                        </div>
+                        <div style="margin-top: 10px;"></div>
+                        <div class="form-group" style="text-align: center;">
+                            <button type="button" class="btn btn-warning" id="btnFindCoprimeE"
+                                style="padding: 0.375rem 3rem;">Find coprime</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="parameter-col">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">D</h4>
+                        <div class="form-group">
+                            <input type="number" class="form-control" name="txtD" id="txtD" value="413"
+                                aria-describedby="D" placeholder="D">
+                            <small id="helpD" class="form-text text-muted">D ∈ Z<sub>ϕ(n)</sub></small>
+                        </div>
+                        <div style="padding-top: 10px;"></div>
+                        <div class="form-group" style="text-align: center;">
+                            <button type="button" class="btn btn-danger" id="btnInverse"
+                                style="padding: 0.375rem 1.75rem;">Brute Force Inverse</button>
+                        </div>
+                        <div style="padding-top: 10px;"></div>
+                        <div class="form-group" style="text-align: center;">
+                            <button type="button" class="btn btn-warning" id="btnFastInverse"
+                                style="padding: 0.375rem 2.7rem;">E<sup>ϕ(n)-2</sup> mod ϕ(n)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div style="padding: 10px; text-align: center;">
+                <!-- m = x<sup>E</sup> &nbsp;mod p -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-success" id="btnEncrypt"
+                                    style="width: 100%;">RSA Encryption</button>
+                            </div>
+                        </div>
+                        <div class="col-3 align-middle" style="text-align: center;">
+                            <div class="align-middle" style="display: flex;
+                                justify-content: center;align-items: center;height: 100%;">
+                                m = x<sup>E</sup> &nbsp;mod n
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <input type="number" class="form-control" name="txtEncrypt" id="txtEncrypt"
+                                aria-describedby="helpId" placeholder="m = x^E mod n">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 10px;">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary" id="btnDecrypt"
+                                    style="width: 100%;">RSA Decryption</button>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="align-middle" style="display: flex;
+                                justify-content: center;align-items: center;height: 100%;">
+                                x = m<sup>D</sup> &nbsp;mod n
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <input type="number" class="form-control" name="txtDecrypt" id="txtDecrypt"
+                                aria-describedby="helpDecrypt" placeholder="x = m^D mod n">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <script>
-        $(document).ready(function () {
-            function gcd(a, b) {
-                if (b == 0)
-                    return a;
-                return gcd(b, a % b);
-            }
-            function modulo(x, E, p) {
-                return new Promise((resolve, reject) => {
-                    let module = 1n;
-                    for (let i = 0n; i < E; i++) {
-                        module = (module * x) % p;
-                    }
-                    resolve(module);
-                });
-            }
-            function eulerPhi(n) {
-                return new Promise((resolve, reject) => {
-                    let phin = n;
-                    for (let i = 2n; i * i <= n; i++) {
-                        if (n % i == 0n) {
-                            while (n % i == 0n) {
-                                n /= i;
-                            }
-                            phin -= phin / i;
+    <div style="margin-top:50px;"></div>
+    <hr />
+</div>
+</div>
+<script>
+    $(document).ready(function () {
+        function gcd(a, b) {
+            if (b == 0)
+                return a;
+            return gcd(b, a % b);
+        }
+        function modulo(x, E, p) {
+            return new Promise((resolve, reject) => {
+                let module = 1n;
+                for (let i = 0n; i < E; i++) {
+                    module = (module * x) % p;
+                }
+                resolve(module);
+            });
+        }
+        function eulerPhi(n) {
+            return new Promise((resolve, reject) => {
+                let phin = n;
+                for (let i = 2n; i * i <= n; i++) {
+                    if (n % i == 0n) {
+                        while (n % i == 0n) {
+                            n /= i;
                         }
+                        phin -= phin / i;
                     }
-                    if (n > 1n) {
-                        phin -= phin / n;
+                }
+                if (n > 1n) {
+                    phin -= phin / n;
 
-                    }
-
-                    resolve(phin);
-                })
-            }
-            function findCoprime(p, oldPrime) {
-                return new Promise((resolve, reject) => {
-                    if (oldPrime > p - 2n) {
-                        oldPrime = 1n;
-                    }
-                    for (let i = oldPrime + 1n; i < p; i++) {
-                        if (gcd(i, p) == 1n) {
-                            resolve(i);
-                            break;
-                        }
-                    }
-                    resolve(0);
-                })
-            }
-            //////////////////////////////////////////////////////////
-            function lcm(a, b) {
-                return (a / gcd(a, b)) * b;
-            }
-
-            function fastInverse(E, phin) {
-                let phi = phin;
-                let y = 0n, x = 1n;
-
-                if (phin == 1n)
-                    return 0n;
-
-                while (E > 1n) {
-                    let q = E / phin;
-                    let t = phin;
-
-                    phin = E % phin, E = t;
-                    t = y;
-
-                    y = x - q * y;
-                    x = t;
                 }
 
-                if (x < 0n)
-                    x += phi;
-
-                return x;
-            }
-            //////////////////////////////////////////////////////////
-            $(".coprime-number").click(function () {
-                let prime = $(this)[0];
-                console.log(prime.innerText);
-                let cop = BigInt(prime.innerText);
-
-                $("#cop").val(cop - 1n);
-                $("#textP").val(cop);
+                resolve(phin);
             })
+        }
+        function findCoprime(p, oldPrime) {
+            return new Promise((resolve, reject) => {
+                if (oldPrime > p - 2n) {
+                    oldPrime = 1n;
+                }
+                for (let i = oldPrime + 1n; i < p; i++) {
+                    if (gcd(i, p) == 1n) {
+                        resolve(i);
+                        break;
+                    }
+                }
+                resolve(0);
+            })
+        }
+        //////////////////////////////////////////////////////////
+        function lcm(a, b) {
+            return (a / gcd(a, b)) * b;
+        }
 
-            $("#btnCoprime").click(function () {
-                let n = BigInt($("#cop").val());
-                let coprime = "";
+        function fastInverse(E, phin) {
+            let phi = phin;
+            let y = 0n, x = 1n;
 
+            if (phin == 1n)
+                return 0n;
+
+            while (E > 1n) {
+                let q = E / phin;
+                let t = phin;
+
+                phin = E % phin, E = t;
+                t = y;
+
+                y = x - q * y;
+                x = t;
+            }
+
+            if (x < 0n)
+                x += phi;
+
+            return x;
+        }
+        //////////////////////////////////////////////////////////
+        $(".coprime-number").click(function () {
+            let prime = $(this)[0];
+            console.log(prime.innerText);
+            let cop = BigInt(prime.innerText);
+
+            $("#cop").val(cop - 1n);
+            $("#textP").val(cop);
+        })
+
+        $("#btnCoprime").click(function () {
+            let n = BigInt($("#cop").val());
+            let coprime = "";
+
+            for (let i = 2n; i < n; i++) {
+                if (gcd(i, n) == 1n) {
+                    coprime += i + " ";
+                }
+            }
+            $("#txtPrime").val(coprime);
+        });
+        function findED(n) {
+            return new Promise((resolve, reject) => {
+                es = []
                 for (let i = 2n; i < n; i++) {
                     if (gcd(i, n) == 1n) {
-                        coprime += i + " ";
+                        es.push(i);
                     }
                 }
-                $("#txtPrime").val(coprime);
-            });
-            function findED(n) {
-                return new Promise((resolve, reject) => {
-                    es = []
-                    for (let i = 2n; i < n; i++) {
-                        if (gcd(i, n) == 1n) {
-                            es.push(i);
+                let dict = {};
+                for (e1 in es) {
+                    for (e2 in es) {
+                        if ((es[e1] * es[e2]) % n == 1n) {
+                            dict[es[e1]] = es[e2];
                         }
                     }
-                    let dict = {};
-                    for (e1 in es) {
-                        for (e2 in es) {
-                            if ((es[e1] * es[e2]) % n == 1n) {
-                                dict[es[e1]] = es[e2];
-                            }
-                        }
-                    }
-                    resolve(dict);
-                })
-            }
-            $("#btnED").click(async function () {
-                let n = BigInt($("#cop").val());
-
-                await findED(n).then(dict => {
-                    let txt = ""
-                    for (e in dict) {
-                        txt += `${e} * ${dict[e]} mod ${n} = 1\n`;
-                    }
-                    $("#txtED").val(txt);
-                })
-            });
-            //////////////////////////////////////////////////////////
-
-            $(".prime-number").click(function () {
-                let isCheck = $("#flexSwitchCheckChecked")[0];
-                let prime = $(this)[0];
-                console.log(prime.innerText);
-                navigator.clipboard.writeText(prime.innerText);
-
-                if (isCheck.checked) {
-                    $("#p").val(prime.innerText);
-                    let p = BigInt(prime.innerText);
-                    updatePhiN(p);
                 }
+                resolve(dict);
             })
+        }
+        $("#btnED").click(async function () {
+            let n = BigInt($("#cop").val());
 
-            async function updatePhiN(n) {
-                await eulerPhi(n).then(phin => {
-                    $("#txtPhiN").val(phin);
-                });
+            await findED(n).then(dict => {
+                let txt = ""
+                for (e in dict) {
+                    txt += `${e} * ${dict[e]} mod ${n} = 1\n`;
+                }
+                $("#txtED").val(txt);
+            })
+        });
+        //////////////////////////////////////////////////////////
 
-            }
-            $("#p").on("change paste keyup", function () {
-                console.log("dfsdf");
-                let p = BigInt($("#p").val());
+        $(".prime-number").click(function () {
+            let isCheck = $("#flexSwitchCheckChecked")[0];
+            let prime = $(this)[0];
+            console.log(prime.innerText);
+            navigator.clipboard.writeText(prime.innerText);
+
+            if (isCheck.checked) {
+                $("#p").val(prime.innerText);
+                let p = BigInt(prime.innerText);
                 updatePhiN(p);
-            });
-
-            $("#inverse").click(async function () {
-                let E = BigInt($("#E").val());
-                let p = BigInt($("#txtPhiN").val());
-
-                let invPromise = new Promise((resolve, reject) => {
-                    try {
-                        let m = p;
-                        for (let num = 1n; num < m; num++) {
-                            if (((E % m) * (num % m)) % m == 1) {
-                                resolve(num);
-                                return num;
-                            }
-                        }
-                    } catch (error) {
-                        reject(error);
-                    }
-                });
-
-                await invPromise.then(inv => {
-                    $("#D").val(inv);
-                }).catch((err) => {
-                    $("#D").val(-1);
-                })
-            });
-            $("#fastInverse").click(async function () {
-                let E = BigInt($("#E").val());
-                let p = BigInt($("#txtPhiN").val());
-
-                let invPromise = new Promise((resolve, reject) => {
-                    try {
-                        let inv = fastInverse(E, p);
-                        resolve(inv);
-                    } catch (error) {
-                        reject(error);
-                    }
-                });
-
-                invPromise.then(inv => {
-                    $("#D").val(inv);
-                }).catch(error => {
-                    $("#D").val(-1);
-                });
-            });
-
-            $("#randomX").click(async function () {
-                let p = BigInt($("#p").val());
-                let ranInt = BigInt(Math.floor(Math.random() * 100000000000));
-                let num = (ranInt * p) / 100000000000n;
-                $("#txtx").val(num);
-            })
-
-            $("#btnCoprimeE").click(async function () {
-                let p = BigInt($("#txtPhiN").val());
-                let oldPrime = BigInt($("#txtE").val());
-                await findCoprime(p, oldPrime).then(newPrime => {
-                    $("#txtE").val(newPrime);
-                });
-            })
-            $("#btnEncryption").click(async function () {
-                let x = BigInt($("#txtx").val());
-                let E = BigInt($("#txtE").val());
-                let p = BigInt($("#p").val());
-                console.log(x + " " + E + " " + p);
-
-                await modulo(x, E, p).then(encrypt => {
-                    $("#encryption").val(encrypt);
-                    $("#encryption").prop('disabled', true);
-                });
-            })
-            $("#btnDecryption").click(async function () {
-                let x = BigInt($("#txtx").val());
-                let D = BigInt($("#txtD").val());
-                let p = BigInt($("#p").val());
-                let encoded = BigInt($("#encryption").val());
-                console.log(x + " " + D + " " + p);
-
-                await modulo(encoded, D, p).then(decrypt => {
-                    $("#decrypt").val(decrypt);
-                    $("#decrypt").prop('disabled', true);
-                });
-            })
-
-            //////////////////////////////////////////////////////////
-            $("#btnRandom").click(async function () {
-                let p = BigInt($("#txtn").val());
-                let ranInt = BigInt(Math.floor(Math.random() * 100000000000));
-                let num = (ranInt * p) / 100000000000n;
-                $("#txtx").val(num);
-            })
-            $("#btnFindCoprimeE").click(async function () {
-                let n = BigInt($("#phin").val());
-                let oldPrime = BigInt($("#txtE").val());
-
-                await findCoprime(n, oldPrime).then(newPrime => {
-                    $("#txtE").val(newPrime);
-                })
-            });
-
-            $("#btnEncrypt").click(async function () {
-                let x = BigInt($("#txtx").val());
-                let E = BigInt($("#txtE").val());
-                let n = BigInt($("#txtn").val());
-                console.log(x + " " + E + " " + n);
-
-                await modulo(x, E, n).then(encrypt => {
-                    console.log(encrypt);
-                    $("#txtEncrypt").val(encrypt);
-                    $("#txtEncrypt").prop('disabled', true);
-                })
-            })
-            $("#btnDecrypt").click(async function () {
-                let x = BigInt($("#txtx").val());
-                let D = BigInt($("#txtD").val());
-                let n = BigInt($("#txtn").val());
-                let encoded = BigInt($("#txtEncrypt").val());
-                console.log(x + " " + D + " " + n);
-
-                await modulo(encoded, D, n).then(decrypt => {
-                    $("#txtDecrypt").val(decrypt);
-                    $("#txtDecrypt").prop('disabled', true);
-                });
-            })
-
-
-            function updateN() {
-                let p = BigInt($("#txtp").val());
-                let q = BigInt($("#txtq").val());
-                let n = p * q;
-                $("#txtn").val(n);
-                let phin = lcm(p - 1n, q - 1n);
-                $("#phin").val(phin);
             }
-            $(".p-primes").click(function () {
-                let prime = $(this)[0];
-                navigator.clipboard.writeText(prime.innerText);
-                $("#txtp").val(prime.innerText);
-                updateN();
-            })
-            $(".q-primes").click(function () {
-                let prime = $(this)[0];
-                navigator.clipboard.writeText(prime.innerText);
-                $("#txtq").val(prime.innerText);
-                updateN();
-            })
+        })
 
-            $("#txtp").on("change paste keyup", function () {
-                updateN();
-            });
-            $("#txtq").on("change paste keyup", function () {
-                updateN();
+        async function updatePhiN(n) {
+            await eulerPhi(n).then(phin => {
+                $("#txtPhiN").val(phin);
             });
 
-            $("#btnInverse").click(async function () {
-                console.log("start inverse");
-                let E = BigInt($("#txtE").val());
-                let phin = BigInt($("#phin").val());
+        }
+        $("#p").on("change paste keyup", function () {
+            console.log("dfsdf");
+            let p = BigInt($("#p").val());
+            updatePhiN(p);
+        });
 
-                let invPromise = new Promise((resolve, reject) => {
-                    try {
-                        let m = phin;
-                        for (let num = 1n; num < m; num++) {
-                            if (((E % m) * (num % m)) % m == 1) {
-                                resolve(num);
-                                return num;
-                            }
+        $("#inverse").click(async function () {
+            let E = BigInt($("#E").val());
+            let p = BigInt($("#txtPhiN").val());
+
+            let invPromise = new Promise((resolve, reject) => {
+                try {
+                    let m = p;
+                    for (let num = 1n; num < m; num++) {
+                        if (((E % m) * (num % m)) % m == 1) {
+                            resolve(num);
+                            return num;
                         }
-                    } catch (error) {
-                        reject(error);
                     }
-                });
-
-                invPromise.then(inv => {
-                    $("#txtD").val(inv);
-                }).catch(error => {
-                    $("#txtD").val(-1);
-                });
-            });
-
-
-            $("#btnFastInverse").click(async function () {
-                let E = BigInt($("#txtE").val());
-                let phin = BigInt($("#phin").val());
-                console.log("E : " + E + " ; phin : " + phin);
-
-                return new Promise((resolve, reject) => {
-                    try {
-                        let inv = fastInverse(E, phin);
-                        console.log("fast inverse : " + inv);
-                        resolve(inv);
-                    } catch (error) {
-                        reject(error);
-                    }
-                }).then(inv => {
-                    $("#txtD").val(inv);
-                }).catch(error => {
-                    $("#txtD").val(-1);
-                });
-            });
-            //////////////////////////////////////////////////////////////
-            $("#btnFindInverse").click(function () {
-                let E = BigInt($("#textE").val());
-                let p = BigInt($("#textP").val());
-                console.log("E : " + E + " ; phin : " + p);
-
-                let invPromise = new Promise((resolve, reject) => {
-                    try {
-                        let inv = fastInverse(E, p);
-                        resolve(inv);
-                    } catch (error) {
-                        reject(error);
-                    }
-                });
-
-                invPromise.then(inv => {
-                    $("#textD").val(inv);
-                }).catch(error => {
-                    $("#textD").val(-1);
-                });
-            })
-            $("#btnFindAnyCoprime").click(function () {
-                let p = BigInt($("#textP").val());
-                let oldPrime = BigInt($("#textE").val());
-                findCoprime(p, oldPrime).then(newPrime => {
-                    $("#textE").val(newPrime);
-                });
-            })
-
-            ///////////////////////////////////////////////////
-            $("#btnMulti").click(async function () {
-                updateMulti();
-            })
-            $("input[name=txtA]").on("keyup paste change", function () {
-                updateMulti();
-            });
-            $("input[name=txtB]").on("keyup paste change", function () {
-                updateMulti();
-            });
-            $("input[name=txtC]").on("keyup paste change", function () {
-                updateMulti();
-            });
-            async function updateMulti() {
-                let A = BigInt($("#txtA").val());
-                let B = BigInt($("#txtB").val());
-                let C = BigInt($("#txtC").val());
-
-                await modulo(A, B, C).then(multi => {
-                    $("#txtMulti").val(multi);
-                }).catch(error => {
-                    $("#txtMulti").val(-1);
-                });
-            }
-            $("#btnFindA").click(async function () {
-                let B = BigInt($("#txtB").val());
-                let C = BigInt($("#txtC").val());
-                let D = BigInt($("#txtMulti").val());
-                let txt = "";
-                for (let i = 2n; i < C; i++) {
-                    let modu = await modulo(i, B, C);
-                    if (modu == D) {
-                        txt += i + "^" + B + " mod " + C + " = " + D + "\n";
-                    }
+                } catch (error) {
+                    reject(error);
                 }
-                $("#txtListResult").val(txt);
+            });
+
+            await invPromise.then(inv => {
+                $("#D").val(inv);
+            }).catch((err) => {
+                $("#D").val(-1);
             })
-            $("#btnFindB").click(async function () {
-                let A = BigInt($("#txtA").val());
-                let C = BigInt($("#txtC").val());
-                let D = BigInt($("#txtMulti").val());
-                let txt = "";
-                for (let i = 2n; i <= C; i++) {
-                    let modu = await modulo(A, i, C);
-                    if (modu == D) {
-                        txt += A + "^" + i + " mod " + C + " = " + D + "\n";
-                    }
+        });
+        $("#fastInverse").click(async function () {
+            let E = BigInt($("#E").val());
+            let p = BigInt($("#txtPhiN").val());
+
+            let invPromise = new Promise((resolve, reject) => {
+                try {
+                    let inv = fastInverse(E, p);
+                    resolve(inv);
+                } catch (error) {
+                    reject(error);
                 }
-                $("#txtListResult").val(txt);
+            });
+
+            invPromise.then(inv => {
+                $("#D").val(inv);
+            }).catch(error => {
+                $("#D").val(-1);
+            });
+        });
+
+        $("#randomX").click(async function () {
+            let p = BigInt($("#p").val());
+            let ranInt = BigInt(Math.floor(Math.random() * 100000000000));
+            let num = (ranInt * p) / 100000000000n;
+            $("#txtx").val(num);
+        })
+
+        $("#btnCoprimeE").click(async function () {
+            let p = BigInt($("#txtPhiN").val());
+            let oldPrime = BigInt($("#txtE").val());
+            await findCoprime(p, oldPrime).then(newPrime => {
+                $("#txtE").val(newPrime);
+            });
+        })
+        $("#btnEncryption").click(async function () {
+            let x = BigInt($("#txtx").val());
+            let E = BigInt($("#txtE").val());
+            let p = BigInt($("#p").val());
+            console.log(x + " " + E + " " + p);
+
+            await modulo(x, E, p).then(encrypt => {
+                $("#encryption").val(encrypt);
+                $("#encryption").prop('disabled', true);
+            });
+        })
+        $("#btnDecryption").click(async function () {
+            let x = BigInt($("#txtx").val());
+            let D = BigInt($("#txtD").val());
+            let p = BigInt($("#p").val());
+            let encoded = BigInt($("#encryption").val());
+            console.log(x + " " + D + " " + p);
+
+            await modulo(encoded, D, p).then(decrypt => {
+                $("#decrypt").val(decrypt);
+                $("#decrypt").prop('disabled', true);
+            });
+        })
+
+        //////////////////////////////////////////////////////////
+        $("#btnRandom").click(async function () {
+            let p = BigInt($("#txtn").val());
+            let ranInt = BigInt(Math.floor(Math.random() * 100000000000));
+            let num = (ranInt * p) / 100000000000n;
+            $("#txtx").val(num);
+        })
+        $("#btnFindCoprimeE").click(async function () {
+            let n = BigInt($("#phin").val());
+            let oldPrime = BigInt($("#txtE").val());
+
+            await findCoprime(n, oldPrime).then(newPrime => {
+                $("#txtE").val(newPrime);
             })
         });
 
-    </script>
-    <footer class="text-center">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <p></p>
-                </div>
+        $("#btnEncrypt").click(async function () {
+            let x = BigInt($("#txtx").val());
+            let E = BigInt($("#txtE").val());
+            let n = BigInt($("#txtn").val());
+            console.log(x + " " + E + " " + n);
+
+            await modulo(x, E, n).then(encrypt => {
+                console.log(encrypt);
+                $("#txtEncrypt").val(encrypt);
+                $("#txtEncrypt").prop('disabled', true);
+            })
+        })
+        $("#btnDecrypt").click(async function () {
+            let x = BigInt($("#txtx").val());
+            let D = BigInt($("#txtD").val());
+            let n = BigInt($("#txtn").val());
+            let encoded = BigInt($("#txtEncrypt").val());
+            console.log(x + " " + D + " " + n);
+
+            await modulo(encoded, D, n).then(decrypt => {
+                $("#txtDecrypt").val(decrypt);
+                $("#txtDecrypt").prop('disabled', true);
+            });
+        })
+
+
+        function updateN() {
+            let p = BigInt($("#txtp").val());
+            let q = BigInt($("#txtq").val());
+            let n = p * q;
+            $("#txtn").val(n);
+            let phin = lcm(p - 1n, q - 1n);
+            $("#phin").val(phin);
+        }
+        $(".p-primes").click(function () {
+            let prime = $(this)[0];
+            navigator.clipboard.writeText(prime.innerText);
+            $("#txtp").val(prime.innerText);
+            updateN();
+        })
+        $(".q-primes").click(function () {
+            let prime = $(this)[0];
+            navigator.clipboard.writeText(prime.innerText);
+            $("#txtq").val(prime.innerText);
+            updateN();
+        })
+
+        $("#txtp").on("change paste keyup", function () {
+            updateN();
+        });
+        $("#txtq").on("change paste keyup", function () {
+            updateN();
+        });
+
+        $("#btnInverse").click(async function () {
+            console.log("start inverse");
+            let E = BigInt($("#txtE").val());
+            let phin = BigInt($("#phin").val());
+
+            let invPromise = new Promise((resolve, reject) => {
+                try {
+                    let m = phin;
+                    for (let num = 1n; num < m; num++) {
+                        if (((E % m) * (num % m)) % m == 1) {
+                            resolve(num);
+                            return num;
+                        }
+                    }
+                } catch (error) {
+                    reject(error);
+                }
+            });
+
+            invPromise.then(inv => {
+                $("#txtD").val(inv);
+            }).catch(error => {
+                $("#txtD").val(-1);
+            });
+        });
+
+
+        $("#btnFastInverse").click(async function () {
+            let E = BigInt($("#txtE").val());
+            let phin = BigInt($("#phin").val());
+            console.log("E : " + E + " ; phin : " + phin);
+
+            return new Promise((resolve, reject) => {
+                try {
+                    let inv = fastInverse(E, phin);
+                    console.log("fast inverse : " + inv);
+                    resolve(inv);
+                } catch (error) {
+                    reject(error);
+                }
+            }).then(inv => {
+                $("#txtD").val(inv);
+            }).catch(error => {
+                $("#txtD").val(-1);
+            });
+        });
+        //////////////////////////////////////////////////////////////
+        $("#btnFindInverse").click(function () {
+            let E = BigInt($("#textE").val());
+            let p = BigInt($("#textP").val());
+            console.log("E : " + E + " ; phin : " + p);
+
+            let invPromise = new Promise((resolve, reject) => {
+                try {
+                    let inv = fastInverse(E, p);
+                    resolve(inv);
+                } catch (error) {
+                    reject(error);
+                }
+            });
+
+            invPromise.then(inv => {
+                $("#textD").val(inv);
+            }).catch(error => {
+                $("#textD").val(-1);
+            });
+        })
+        $("#btnFindAnyCoprime").click(function () {
+            let p = BigInt($("#textP").val());
+            let oldPrime = BigInt($("#textE").val());
+            findCoprime(p, oldPrime).then(newPrime => {
+                $("#textE").val(newPrime);
+            });
+        })
+
+        ///////////////////////////////////////////////////
+        $("#btnMulti").click(async function () {
+            updateMulti();
+        })
+        $("input[name=txtA]").on("keyup paste change", function () {
+            updateMulti();
+        });
+        $("input[name=txtB]").on("keyup paste change", function () {
+            updateMulti();
+        });
+        $("input[name=txtC]").on("keyup paste change", function () {
+            updateMulti();
+        });
+        async function updateMulti() {
+            let A = BigInt($("#txtA").val());
+            let B = BigInt($("#txtB").val());
+            let C = BigInt($("#txtC").val());
+
+            await modulo(A, B, C).then(multi => {
+                $("#txtMulti").val(multi);
+            }).catch(error => {
+                $("#txtMulti").val(-1);
+            });
+        }
+        $("#btnFindA").click(async function () {
+            let B = BigInt($("#txtB").val());
+            let C = BigInt($("#txtC").val());
+            let D = BigInt($("#txtMulti").val());
+            let txt = "";
+            for (let i = 2n; i < C; i++) {
+                let modu = await modulo(i, B, C);
+                if (modu == D) {
+                    txt += i + "^" + B + " mod " + C + " = " + D + "\n";
+                }
+            }
+            $("#txtListResult").val(txt);
+        })
+        $("#btnFindB").click(async function () {
+            let A = BigInt($("#txtA").val());
+            let C = BigInt($("#txtC").val());
+            let D = BigInt($("#txtMulti").val());
+            let txt = "";
+            for (let i = 2n; i <= C; i++) {
+                let modu = await modulo(A, i, C);
+                if (modu == D) {
+                    txt += A + "^" + i + " mod " + C + " = " + D + "\n";
+                }
+            }
+            $("#txtListResult").val(txt);
+        })
+    });
+
+</script>
+<footer class="text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <p></p>
             </div>
         </div>
-    </footer>
-
-    <!-- Bootstrap JavaScript Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
-
-    <!-- Add before closing body tag -->
-    <button class="quiz-button" onclick="startQuiz('RSA')">Take Quiz</button>
-    
-    <div class="quiz-overlay" id="quizOverlay"></div>
-    <div class="quiz-modal" id="quizModal">
-        <span class="close-quiz" onclick="closeQuiz()">&times;</span>
-        <div id="quizContent"></div>
     </div>
+</footer>
+
+<!-- Bootstrap JavaScript Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+
+<!-- Add before closing body tag -->
+<div class="quiz-overlay" id="quizOverlay"></div>
+<div class="quiz-modal" id="quizModal">
+    <span class="close-quiz" onclick="closeQuiz()">&times;</span>
+    <div id="quizContent"></div>
+</div>
+
+<script>
+    // Function to get cookie value by name
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    // Check login status when page loads
+    document.addEventListener('DOMContentLoaded', async () => {
+        let sessionId = getCookie('session_id');
+        const userInfo = document.getElementById('userInfo');
+        
+        if (!sessionId) {
+            userInfo.innerHTML = `
+                <a href="../login.html">
+                    <button class="sign-in-btn" style="background-color: #01E9F8; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;" title="Sign in to your account">Sign In</button>
+                </a>
+            `;
+            return;
+        }
+        
+        try {
+            const response = await fetch('https://security-viz-api.onrender.com/check-session', {
+                method: 'GET',
+                headers: {
+                    'X-Session-ID': sessionId,
+                    'Accept': 'application/json'
+                },
+                credentials: 'include'
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.authenticated) {
+                userInfo.innerHTML = `
+                    <span class="welcome-text" style="color: #01E9F8; font-size: 1.1rem; margin-right: 1rem;">Welcome, ${data.username}</span>
+                    <button class="sign-in-btn" style="background-color: #01E9F8; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;" onclick="logout()" title="Sign out">Logout</button>
+                `;
+            } else {
+                // If session is invalid, remove the cookie
+                document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                userInfo.innerHTML = `
+                    <a href="../login.html">
+                        <button class="sign-in-btn" style="background-color: #01E9F8; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;" title="Sign in to your account">Sign In</button>
+                    </a>
+                `;
+            }
+        } catch (error) {
+            userInfo.innerHTML = `
+                <a href="../login.html">
+                    <button class="sign-in-btn" style="background-color: #01E9F8; color: #000; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;" title="Sign in to your account">Sign In</button>
+                </a>
+            `;
+        }
+    });
+
+    async function logout() {
+        const sessionId = getCookie('session_id');
+        if (!sessionId) {
+            window.location.href = '../login.html';
+            return;
+        }
+
+        try {
+            const response = await fetch('https://security-viz-api.onrender.com/logout', {
+                method: 'POST',
+                headers: {
+                    'X-Session-ID': sessionId,
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+
+            // Remove the session cookie regardless of server response
+            document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+            window.location.reload();
+        } catch (error) {
+            console.error('Logout failed:', error);
+            // Still remove cookie and reload on error
+            document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+            window.location.reload();
+        }
+    }
+</script>
 </body>
 
 </html>

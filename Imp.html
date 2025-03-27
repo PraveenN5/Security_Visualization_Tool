@@ -11,6 +11,9 @@
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #1e1e2f 0%, #2c2c44 100%);
+            min-height: 100vh; /* Ensure full height */
+            display: flex;
+            flex-direction: column; /* Stack elements vertically */
         }
 
         .animate-fade {
@@ -25,6 +28,7 @@
         .card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
@@ -61,6 +65,7 @@
         .glass-effect {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
@@ -71,7 +76,7 @@
 
         .quiz-button {
             position: fixed;
-            top: 20px;
+            top: 80px;
             right: 20px;
             background-color: #01E9F8;
             color: #1F252E;
@@ -83,12 +88,188 @@
             transition: all 0.3s ease;
             z-index: 1000;
         }
+
+        .container {
+            display: flex;
+            flex-direction: column; /* Stack vertically */
+            padding: 20px;
+            flex: 1; /* Allow the container to fill available space */
+            margin-top: 60px; /* Add space for the navigation bar */
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: column; /* Keep it column on larger screens */
+            }
+        }
+
+        /* Mobile view adjustments */
+        @media (max-width: 768px) {
+            .flex {
+                flex-direction: column; /* Stack input and button vertically */
+            }
+        }
+
+        /* Leaderboard component styles */
+        .leaderboard-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 280px;
+            background-color: rgba(31, 37, 46, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(1, 233, 248, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 100;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .leaderboard-title {
+            font-size: 1rem;
+            text-align: center;
+            margin: 0 0 10px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #01E9F8;
+        }
+
+        .leaderboard-content {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+        }
+
+        .leaderboard-item.top-three {
+            background-color: rgba(1, 233, 248, 0.15);
+        }
+
+        .leaderboard-rank {
+            font-weight: bold;
+            width: 40px;
+        }
+
+        .leaderboard-name {
+            flex-grow: 1;
+            margin: 0 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .leaderboard-score {
+            font-weight: bold;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .leaderboard-loading, 
+        .leaderboard-error,
+        .leaderboard-empty {
+            text-align: center;
+            padding: 10px;
+            color: #ddd;
+            font-style: italic;
+        }
+
+        .leaderboard-error {
+            color: #ff6b6b;
+        }
+
+        /* Make leaderboard responsive */
+        @media (max-width: 768px) {
+            .leaderboard-container {
+                position: static;
+                width: calc(100% - 30px);
+                margin: 15px auto;
+                max-width: 400px;
+            }
+        }
+
+        /* Navigation bar styles */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(31, 37, 46, 0.95);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(1, 233, 248, 0.1);
+        }
+        
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 1.5rem;
+            transition: color 0.3s ease;
+        }
+        
+        .sign-in-btn {
+            background-color: #01E9F8;
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
     </style>
-    <link rel="stylesheet" href="css/quiz.css">
-    <script src="js/chatbot.js"></script>
-    <script src="js/quiz.js"></script>
+    <link rel="stylesheet" href="../css/quiz.css">
+    <script src="../js/chatbot.js"></script>
+    <script src="../js/quiz.js"></script>
+    <script src="../js/leaderboard.js"></script>
 </head>
 <body class="bg-gray-50">
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <div class="nav-links">
+            <a href="../index.html">Home</a>
+            <a href="../key-strength.html">Key Strength Analyzer</a>
+            <a href="../algorithm-comparison.html">Algorithm Comparison</a>
+        </div>
+        <div id="userInfo">
+            <!-- This will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Quiz Button (Fixed Position) -->
+    <div style="position: fixed; top: 80px; right: 20px; z-index: 999; display: flex; gap: 10px;">
+        <button class="quiz-button" onclick="startQuiz('SHA-256')" style="position: static;">Take Quiz</button>
+    </div>
+
+    <!-- Leaderboard Button Container (Hardcoded) -->
+    <div style="position: fixed; top: 80px; left: 20px; z-index: 999; display: flex; gap: 10px;">
+        <button 
+          class="leaderboard-button" 
+          onclick="showLeaderboard('SHA-256')" 
+          style="background: linear-gradient(135deg, #3a7bd5, #00d2ff); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 20px rgba(58, 123, 213, 0.4); transition: all 0.3s ease;">
+          🏆 Leaderboard
+        </button>
+    </div>
+
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <h1 class="text-3xl font-bold text-center mb-8 title-gradient">SHA-256 Hash Algorithm Visualization</h1>
         
@@ -102,6 +283,8 @@
                     placeholder="Enter message to hash"
                     class="flex-grow px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
+            </div>
+            <div class="mt-4 flex justify-center">
                 <button 
                     onclick="visualizeHash()"
                     class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors"
@@ -152,8 +335,7 @@
                         <div class="bg-white p-3 rounded">
                             <p class="font-medium text-sm">Working Variables (like mixing bowls):</p>
                             <ul class="list-disc list-inside text-sm mt-2">
-                                <li>a, b, c, d, e, f, g, h - Eight "bowls" where we mix our data</li>
-                                <li>Each bowl holds a 32-bit number (like a recipe amount)</li>
+                                <li>h0, h1, h2, h3, h4, h5, h6, h7</li>
                             </ul>
                         </div>
                         
@@ -428,8 +610,6 @@
         </div>
     </div>
 
-    <button class="quiz-button" onclick="startQuiz('SHA')">Take Quiz</button>
-
     <div class="quiz-overlay" id="quizOverlay"></div>
     <div class="quiz-modal" id="quizModal">
         <span class="close-quiz" onclick="closeQuiz()">&times;</span>
@@ -437,6 +617,90 @@
     </div>
 
     <script>
+        // Function to get cookie value by name
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        // Check login status when page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            let sessionId = getCookie('session_id');
+            const userInfo = document.getElementById('userInfo');
+            
+            if (!sessionId) {
+                userInfo.innerHTML = `
+                    <a href="../login.html">
+                        <button class="sign-in-btn" title="Sign in to your account">Sign In</button>
+                    </a>
+                `;
+                return;
+            }
+            
+            try {
+                const response = await fetch('https://security-viz-api.onrender.com/check-session', {
+                    method: 'GET',
+                    headers: {
+                        'X-Session-ID': sessionId,
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.authenticated) {
+                    userInfo.innerHTML = `
+                        <span class="welcome-text" style="color: #01E9F8; font-size: 1.1rem; margin-right: 1rem;">Welcome, ${data.username}</span>
+                        <button class="sign-in-btn" onclick="logout()" title="Sign out">Logout</button>
+                    `;
+                } else {
+                    // If session is invalid, remove the cookie
+                    document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                    userInfo.innerHTML = `
+                        <a href="../login.html">
+                            <button class="sign-in-btn" title="Sign in to your account">Sign In</button>
+                        </a>
+                    `;
+                }
+            } catch (error) {
+                userInfo.innerHTML = `
+                    <a href="../login.html">
+                        <button class="sign-in-btn" title="Sign in to your account">Sign In</button>
+                    </a>
+                `;
+            }
+        });
+
+        async function logout() {
+            const sessionId = getCookie('session_id');
+            if (!sessionId) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('https://security-viz-api.onrender.com/logout', {
+                    method: 'POST',
+                    headers: {
+                        'X-Session-ID': sessionId,
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+
+                // Remove the session cookie regardless of server response
+                document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                window.location.reload();
+            } catch (error) {
+                console.error('Logout failed:', error);
+                // Still remove cookie and reload on error
+                document.cookie = 'session_id=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                window.location.reload();
+            }
+        }
+
         function visualizeHash() {
             const message = document.getElementById('messageInput').value;
             if (!message) {
